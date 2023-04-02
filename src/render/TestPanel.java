@@ -28,6 +28,7 @@ public class TestPanel extends JPanel {
 
     PixelImage pi;
 
+
     public TestPanel(){
         p = new Polygon(new Coordinate[]{
                 new Coordinate(-rad,rad,100),
@@ -96,7 +97,7 @@ public class TestPanel extends JPanel {
 
          */
         g.setColor(Color.BLACK);
-        poly.render(g);
+        //poly.render(g);
 
     }
 
