@@ -12,7 +12,7 @@ public class MeshPolygon extends Polygon{
     public MeshPolygon(Vertex[] points, Coordinate center) {
         super(points, center);
         this.normal = avgOfVertexNormals(points);
-
+        super.setColor(Color.YELLOW);
     }
 
     private Vector avgOfVertexNormals(Vertex[] vertices) {

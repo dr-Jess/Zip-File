@@ -61,6 +61,7 @@ public class MeshBuilder {
                     }
                     MeshPolygon p = new MeshPolygon(points, Coordinate.ORIGIN);
                     p.setColor(new Color(0,200,0));
+                    //p.setColor(new Color((int) (Math.random() * 2) * 200,(int) (Math.random() * 2) * 200,(int) (Math.random() * 2) * 200));
                     addFace(p);
                     break;
             }

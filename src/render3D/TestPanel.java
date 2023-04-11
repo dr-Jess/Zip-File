@@ -25,9 +25,22 @@ public class TestPanel extends JPanel {
     double far = close+rad;
     Polygon p;
 
-    Mesh m = new MeshBuilder().readOBJ("C:\\Users\\jonat\\Desktop\\obj\\textFile3.obj","C:\\Users\\jonat\\Desktop\\obj\\textfilepalette.png");
-    //Mesh m = new MeshBuilder().readOBJ("C:\\Users\\jonat\\Desktop\\obj\\model_out3.obj");
-
+    //Mesh m = new MeshBuilder().readOBJ("C:\\Users\\jonat\\Desktop\\obj\\textFile3.obj","C:\\Users\\jonat\\Desktop\\obj\\textfilepalette.png");
+    //Mesh m = new MeshBuilder().readOBJ("C:\\Users\\jonat\\Desktop\\obj\\model_out.obj");
+    Mesh m = new Mesh(
+            new MeshPolygon[]{
+                    new MeshPolygon(
+                            new Vertex[]{
+                                    new Vertex(1,1,100,new Vector(0,0,-1)),
+                                    new Vertex(1,-1,100,new Vector(0,0,-1)),
+                                    new Vertex(-1,-1,100,new Vector(0,0,-1)),
+                                    new Vertex(-1,1,100,new Vector(0,0,-1))
+                            }
+                            ,new Coordinate (0,0,100)
+                    )
+            },
+            new Coordinate (0,0,100)
+            );
     public TestPanel(){
         p = new Polygon(new Coordinate[]{
                 new Coordinate(-rad,rad,100),
@@ -145,7 +158,9 @@ public class TestPanel extends JPanel {
 
          */
         g.setColor(Color.BLACK);
-        m.render(g);
+        final Graphics2D g2 = (Graphics2D) g;
+        m.render(g2);
+        repaint();
         //poly.g);
 
     }
@@ -171,7 +186,6 @@ public class TestPanel extends JPanel {
                 y += yV;
                 //poly.moveTo(poly.getCenter().translatedBy(xV,yV,v));
                 m.incrementRotation(xrotationSpeed,zrotationSpeed,0);
-                testPanel.repaint();
             }
         });
         timer.start();

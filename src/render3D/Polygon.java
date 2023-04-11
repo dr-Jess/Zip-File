@@ -245,6 +245,36 @@ public class Polygon implements Comparable{
         return p;
     }
 
+    public BoundingBox getBounds(){
+        double left = Double.MAX_VALUE;
+        double right = -Double.MAX_VALUE;
+        double top = -Double.MAX_VALUE;
+        double bottom = Double.MAX_VALUE;
+        double front = -Double.MAX_VALUE;
+        double back = Double.MAX_VALUE;
+        for(Coordinate c: points){
+            if(c.getX() > right)
+                right = c.getX();
+            if(c.getX() < left)
+                left = c.getX();
+
+            if(c.getY() > top)
+                top = c.getY();
+            if(c.getY() < bottom)
+                bottom = c.getY();
+
+            if(c.getZ() > front)
+                front = c.getZ();
+            if(c.getZ() < back)
+                back = c.getZ();
+        }
+        return new BoundingBox(top,bottom,left,right,front,back);
+    }
+
+    public double getDepthAt(double x, double y){
+        return 0;
+    }
+
     public String toString(){
         StringBuilder ret = new StringBuilder();
         for(Coordinate c: points){

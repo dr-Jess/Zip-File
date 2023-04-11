@@ -1,5 +1,6 @@
 package render2D;
 
+import render3D.BoundingBox;
 import render3D.Coordinate;
 
 import java.awt.*;
@@ -46,6 +47,25 @@ public class Polygon2D {
 
     public Color getColor() {
         return color;
+    }
+
+    public BoundingBox2D getBounds(){
+        int left = Integer.MAX_VALUE;
+        int right = -Integer.MAX_VALUE;
+        int top = -Integer.MAX_VALUE;
+        int bottom = Integer.MAX_VALUE;
+        for(Coordinate2D c: points){
+            if(c.getX() > right)
+                right = c.getX();
+            if(c.getX() < left)
+                left = c.getX();
+
+            if(c.getY() > top)
+                top = c.getY();
+            if(c.getY() < bottom)
+                bottom = c.getY();
+        }
+        return new BoundingBox2D(top,bottom,left,right);
     }
 
     public String toString(){

@@ -11,4 +11,11 @@ public class Operator {
             return upper;
         return n;
     }
+    public static double limitNum(double n, double lower, double upper){
+        if(n < lower)
+            return lower;
+        if(n > upper)
+            return upper;
+        return n;
+    }
 }
