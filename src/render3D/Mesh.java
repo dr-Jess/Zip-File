@@ -3,19 +3,14 @@ package render3D;
 import render.Operator;
 import render.Scene;
 import render2D.BoundingBox2D;
-import render2D.Coordinate2D;
 import render2D.Polygon2D;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Mesh {
-    private MeshPolygon[] polygons;
+    private final MeshPolygon[] polygons;
     Coordinate center;
 
     public Mesh(MeshPolygon[] polygons, Coordinate center){
@@ -33,8 +28,9 @@ public class Mesh {
     }
 
     public void render(Graphics g){
-        //paintersAlgorithm(g);
-        zBuffer(g);
+        paintersAlgorithm(g);
+        //zBuffer(g);
+        //zBufferLines(g);
 
     }
 
@@ -57,11 +53,7 @@ public class Mesh {
 
     public ArrayList<MeshPolygon> sortPolygons() {
         Arrays.sort(polygons);
-        ArrayList<MeshPolygon> temp = new ArrayList<>();
-        for(MeshPolygon mp: polygons){
-            temp.add(mp);
-        }
-        return temp;
+        return new ArrayList<>(Arrays.asList(polygons));
     }
 
     double[][] zDepths = new double[Scene.SCREEN_WIDTH][Scene.SCREEN_HEIGHT];
@@ -69,7 +61,9 @@ public class Mesh {
 
 
     public void zBuffer(Graphics g){
-        //TODO implement zbuffer code
+        double centerX = Scene.SCREEN_CENTER.getX();
+        double centerY = Scene.SCREEN_CENTER.getY();
+
 
         for(MeshPolygon p: polygons) {
             Color c = p.getColor();
@@ -89,38 +83,40 @@ public class Mesh {
             BoundingBox2D bounds2D = translated.getBounds();
             double xMin = bounds.getLeft();
             double xMax = bounds.getRight();
-            double xIncrement = 0.7 * (xMax - xMin) / (Operator.limitNum(bounds2D.getRight(),0,Scene.SCREEN_WIDTH) - Operator.limitNum(bounds2D.getLeft(),0,Scene.SCREEN_WIDTH));
+            double xIncrement = 1.2 * (xMax - xMin) / ((Operator.limitNum(bounds2D.getRight(), 0, Scene.SCREEN_WIDTH) - Operator.limitNum(bounds2D.getLeft(), 0, Scene.SCREEN_WIDTH))+1);
+            //xIncrement = 1;
             double yMin = bounds.getBottom();
             double yMax = bounds.getTop();
-            double yIncrement = 0.7 * (yMax - yMin) / (Operator.limitNum(bounds2D.getTop(),0,Scene.SCREEN_HEIGHT) - Operator.limitNum(bounds2D.getBottom(),0,Scene.SCREEN_HEIGHT));
-            double zMin = bounds.getBack();
+            double yIncrement = 1.2 * (yMax - yMin) / ((Operator.limitNum(bounds2D.getTop(), 0, Scene.SCREEN_HEIGHT) - Operator.limitNum(bounds2D.getBottom(), 0, Scene.SCREEN_HEIGHT))+1);
+            //yIncrement = 1;
             double zMax = bounds.getFront();
-            if((bounds2D.getRight() >= 0 || bounds2D.getLeft() <= Scene.SCREEN_WIDTH) && (bounds2D.getBottom() >= 0 || bounds2D.getTop() <= Scene.SCREEN_HEIGHT))
-            //if(!Operator.almostEqual(faceNormal.dotProduct(new Vector(Coordinate.ORIGIN,avg)),0,1e-4))
-            if (zMax > 0) {
-                //System.out.println("X: " + xMin + " " + xMax + " " + xIncrement + " " + bounds2D.getRight() + " " + bounds2D.getLeft() + " " + (Operator.limitNum(bounds2D.getRight(),0,Scene.SCREEN_WIDTH) - Operator.limitNum(bounds2D.getLeft(),0,Scene.SCREEN_WIDTH)));
-                //System.out.println("Y: " + yMin + " " + yMax + " " + yIncrement + " " + bounds2D.getTop() + " " + bounds2D.getBottom() + " " + + (Operator.limitNum(bounds2D.getTop(),0,Scene.SCREEN_HEIGHT) - Operator.limitNum(bounds2D.getBottom(),0,Scene.SCREEN_HEIGHT)));
-                //System.out.println("Z: " + zMin + " " + zMax);
-                for (double x = xMin; x < xMax; x += xIncrement) {
-                    for (double y = yMin; y < yMax; y += yIncrement) {;
-                        double zDepth = cz - (dx * (x - cx) + dy * (y - cy)) / dz;
-                        if (zDepth >= 0) {
-                            Coordinate check = new Coordinate(x, y, 0);
-                            if (p.intersects(check)) {
-                                double zMod = 1 / (zDepth + 1);
-                                int screenX = (int) Math.round(x * Scene.PLANE_DISTANCE_FROM_CAMERA * zMod  + Scene.SCREEN_CENTER.getX());
-                                int screenY = (int) Math.round(y * Scene.PLANE_DISTANCE_FROM_CAMERA * zMod + Scene.SCREEN_CENTER.getY());
 
-                                if (0 < screenX && screenX < Scene.SCREEN_WIDTH && 0 < screenY && screenY < Scene.SCREEN_HEIGHT)
-                                    if (zDepths[screenX][screenY] > zDepth) {
-                                        zDepths[screenX][screenY] = zDepth;
-                                        screen[screenX][screenY] = c;
+            if(faceNormal.dotProduct(new Vector(Coordinate.ORIGIN,avg)) <= 0)
+            if ((bounds2D.getRight() >= 0 || bounds2D.getLeft() <= Scene.SCREEN_WIDTH) && (bounds2D.getBottom() >= 0 || bounds2D.getTop() <= Scene.SCREEN_HEIGHT)) {
+                if (zMax > 0) {
+                    if(!Operator.almostEqual(xIncrement,0,1e-4))
+                    for (double x = xMin; x < xMax; x += xIncrement) {
+                        if(!Operator.almostEqual(yIncrement,0,1e-4))
+                        for (double y = yMin; y < yMax; y += yIncrement) {
+                            double zDepth = cz - (dx * (x - cx) + dy * (y - cy)) / dz;
+                            if (zDepth >= 0) {
+                                Coordinate check = new Coordinate(x, y, 0);
+                                if (p.intersects(check)) {
+                                    double zMod = 1 / (zDepth + 1);
+                                    int screenX = (int) Math.round(x * Scene.PLANE_DISTANCE_FROM_CAMERA * zMod + centerX);
+                                    int screenY = (int) Math.round(y * Scene.PLANE_DISTANCE_FROM_CAMERA * zMod + centerY);
+
+                                    if (0 < screenX && screenX < Scene.SCREEN_WIDTH && 0 < screenY && screenY < Scene.SCREEN_HEIGHT) {
+                                        if (zDepths[screenX][screenY] > zDepth) {
+                                            zDepths[screenX][screenY] = zDepth;
+                                            screen[screenX][screenY] = c;
+                                        }
                                     }
+                                }
                             }
                         }
                     }
                 }
-
             }
         }
 
@@ -134,6 +130,98 @@ public class Mesh {
                 screen[x][y] = null;
             }
         }
+    }
+
+    public void zBufferLines(Graphics g){
+        double centerX = Scene.SCREEN_CENTER.getX();
+        double centerY = Scene.SCREEN_CENTER.getY();
+
+
+        for(MeshPolygon p: polygons) {
+            Color c = p.getColor();
+
+            Coordinate avg = p.getAveragePoint();
+            double cx = avg.getX();
+            double cy = avg.getY();
+            double cz = avg.getZ();
+
+            Vector faceNormal = p.getNormal();
+            double dx = faceNormal.getDx();
+            double dy = faceNormal.getDy();
+            double dz = faceNormal.getDz();
+
+            Polygon2D translated = p.translateToCameraView();
+            BoundingBox bounds = p.getBounds();
+            BoundingBox2D bounds2D = translated.getBounds();
+            double xMin = bounds.getLeft();
+            double xMax = bounds.getRight();
+            double xIncrement = 1.2 * (xMax - xMin) / (Operator.limitNum(bounds2D.getRight(), 0, Scene.SCREEN_WIDTH) - Operator.limitNum(bounds2D.getLeft(), 0, Scene.SCREEN_WIDTH));
+
+            double yMin = bounds.getBottom();
+            double yMax = bounds.getTop();
+            double yIncrement = 1.2 * (yMax - yMin) / (Operator.limitNum(bounds2D.getTop(), 0, Scene.SCREEN_HEIGHT) - Operator.limitNum(bounds2D.getBottom(), 0, Scene.SCREEN_HEIGHT));
+
+            double zMax = bounds.getFront();
+            if(faceNormal.dotProduct(new Vector(Coordinate.ORIGIN,avg)) <= 0)
+                if ((bounds2D.getRight() >= 0 || bounds2D.getLeft() <= Scene.SCREEN_WIDTH) && (bounds2D.getBottom() >= 0 || bounds2D.getTop() <= Scene.SCREEN_HEIGHT)) {
+                    if (zMax > 0) {
+                        if(!Operator.almostEqual(xIncrement,0,1e-4))
+                            for (double x = xMin; x < xMax; x += xIncrement) {
+                                if(!Operator.almostEqual(yIncrement,0,1e-4))
+                                    for (double y = yMin; y < yMax; y += yIncrement) {
+                                        double zDepth = cz - (dx * (x - cx) + dy * (y - cy)) / dz;
+                                        if (zDepth >= 0) {
+                                            Coordinate check = new Coordinate(x, y, 0);
+                                            if (p.intersects(check)) {
+                                                double zMod = 1 / (zDepth + 1);
+                                                int screenX = (int) Math.round(x * Scene.PLANE_DISTANCE_FROM_CAMERA * zMod + centerX);
+                                                int screenY = (int) Math.round(y * Scene.PLANE_DISTANCE_FROM_CAMERA * zMod + centerY);
+
+                                                if (0 < screenX && screenX < Scene.SCREEN_WIDTH && 0 < screenY && screenY < Scene.SCREEN_HEIGHT) {
+                                                    if (zDepths[screenX][screenY] > zDepth) {
+                                                        zDepths[screenX][screenY] = zDepth;
+                                                        screen[screenX][screenY] = c;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            }
+                    }
+                }
+        }
+
+
+        for(int x = 0; x < screen.length; x++){
+            Color color = null;
+            int yStart = -1;
+            for(int y = 0; y < screen[0].length; y++){
+                if(screen[x][y] != null) {
+                    if(yStart == -1){
+                        yStart = y;
+                        color = screen[x][y];
+                    }
+                    if(!screen[x][y].equals(color)){
+                        g.setColor(color);
+                        g.drawLine(x,yStart,x,y-1);
+                        yStart = y;
+                        color = screen[x][y];
+                    }
+                }
+                else if (color != null){
+                    g.setColor(color);
+                    g.drawLine(x,yStart,x,y-1);
+                    yStart = -1;
+                    color = screen[x][y];
+                }
+                zDepths[x][y] = Double.MAX_VALUE;
+                screen[x][y] = null;
+            }
+        }
+    }
+
+    public void zBufferPolygons(Graphics g){
+
     }
 
     public void moveTo(Coordinate translatedBy) {

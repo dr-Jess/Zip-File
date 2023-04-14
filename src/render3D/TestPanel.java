@@ -7,6 +7,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 
@@ -133,7 +134,7 @@ public class TestPanel extends JPanel {
     }
     @Override
     public void paintComponent(Graphics g) {
-        g.clearRect(0,0, Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
+        //g.clearRect(0,0, Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
         //pi.g);
         /*
         BufferedImage b = null;
@@ -157,9 +158,12 @@ public class TestPanel extends JPanel {
         }
 
          */
+        BufferedImage canvas = new BufferedImage(Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT,BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = canvas.getGraphics();
         g.setColor(Color.BLACK);
         final Graphics2D g2 = (Graphics2D) g;
-        m.render(g2);
+        m.render(graphics);
+        g.drawImage(canvas,0,0,null);
         repaint();
         //poly.g);
 
