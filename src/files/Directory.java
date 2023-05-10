@@ -7,11 +7,27 @@ public class Directory extends File{
     }
     private File[] children = {};
 
+    public Directory(Directory parent, String name){
+        super(parent, name);
+    }
+
     /**
      * @return File[] list of children
      */
     public File[] getChildren() {
         return children;
+    }
+
+    public void removeChild(File child){
+        for(int i=0;i<children.length;i++){
+            if(children[i]==child){
+                File[] newChildren = new File[children.length-1];
+                System.arraycopy(children,0,newChildren,0,i);
+                System.arraycopy(children,i+1,newChildren,i,children.length-i-1);
+                children = newChildren;
+                return;
+            }
+        }
     }
 
     /**

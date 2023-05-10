@@ -8,17 +8,19 @@ public class Image extends File{
     }
 
     /**
+     * Stores a String as the image file's image path, and sets parent.
+     * @param parent parent file.
+     * @param imagePath Image path to be saved
+     */
+    public Image(Directory parent, String name, String imagePath){
+        super(parent, name);
+        this.imagePath = imagePath;
+    }
+
+    /**
      * @return the image path of this image file
      */
     public String getImagePath() {
         return imagePath;
-    }
-
-    /**
-     * Stores a String as the image file's image path.
-     * @param imagePath Image path to be saved
-     */
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
     }
 }

@@ -15,6 +15,11 @@ public enum FileType {
         public String get3DPath(){
             return "";
         }
+    },
+    ZIP{
+        public String get3DPath() {
+            return "";
+        }
     };
 
     /**

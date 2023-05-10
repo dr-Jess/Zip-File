@@ -3,6 +3,19 @@ package files;
 public abstract class File {
     private Directory[] path;
     private Directory parent;
+    private String name;
+
+    /**
+     * Sets the parent file to the specified parameter and sets up the path, inheriting from the parent.
+     * @param parent parent file
+     */
+    public File(Directory parent, String name){
+        this.name = name;
+        this.parent = parent;
+        this.path = new Directory[parent.getPath().length+1];
+        System.arraycopy(parent.getPath(),0,this.path,0,parent.getPath().length);
+        this.path[this.path.length-1] = parent;
+    }
 
     /**
      * @return FileType enum of the file type
@@ -23,15 +36,7 @@ public abstract class File {
         return parent;
     }
 
-    /**
-     * Sets the parent file to the specified parameter and sets up the path, inheriting from the parent.
-     * @param parent parent file
-     */
-    public void setParent(Directory parent) {
-        this.parent = parent;
-        this.path = new Directory[parent.getPath().length+1];
-        System.arraycopy(parent.getPath(),0,this.path,0,parent.getPath().length);
-        this.path[this.path.length-1] = parent;
+    public String getName() {
+        return name;
     }
-
 }
