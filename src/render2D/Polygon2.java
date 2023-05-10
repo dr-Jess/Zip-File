@@ -1,21 +1,20 @@
 package render2D;
 
-import render3D.BoundingBox;
 import render3D.Coordinate;
 
 import java.awt.*;
 
-public class Polygon2D {
-    private Coordinate2D[] points;
+public class Polygon2 {
+    private Coordinate2[] points;
 
     private Color color = new Color((int) (Math.random() * 255) ,(int) (Math.random() * 255) ,(int) (Math.random() * 255) );
 
-    public Polygon2D(Coordinate2D[] points){
+    public Polygon2(Coordinate2[] points){
         this.points = points;
     }
 
-    public Polygon2D(Coordinate[] points){
-        Coordinate2D[] temp = new Coordinate2D[points.length];
+    public Polygon2(Coordinate[] points){
+        Coordinate2[] temp = new Coordinate2[points.length];
         for(int i = 0; i < points.length; i++){
             temp[i] = points[i].translateToCameraView();
         }
@@ -49,12 +48,12 @@ public class Polygon2D {
         return color;
     }
 
-    public BoundingBox2D getBounds(){
+    public BoundingBox2 getBounds(){
         int left = Integer.MAX_VALUE;
         int right = -Integer.MAX_VALUE;
         int top = -Integer.MAX_VALUE;
         int bottom = Integer.MAX_VALUE;
-        for(Coordinate2D c: points){
+        for(Coordinate2 c: points){
             if(c.getX() > right)
                 right = c.getX();
             if(c.getX() < left)
@@ -65,12 +64,12 @@ public class Polygon2D {
             if(c.getY() < bottom)
                 bottom = c.getY();
         }
-        return new BoundingBox2D(top,bottom,left,right);
+        return new BoundingBox2(top,bottom,left,right);
     }
 
     public String toString(){
         StringBuilder ret = new StringBuilder();
-        for(Coordinate2D c: points){
+        for(Coordinate2 c: points){
             ret.append((int) c.getX()).append(" ").append((int) c.getY());
             ret.append(" ->\n");
         }

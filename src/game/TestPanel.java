@@ -1,6 +1,8 @@
-package render3D;
+package game;
 
-import javax.imageio.ImageIO;
+import render3D.*;
+import render3D.Polygon;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -8,10 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 
-
-import render.Scene;
 
 public class TestPanel extends JPanel {
     double close = 100;
@@ -24,7 +23,7 @@ public class TestPanel extends JPanel {
     double xrotationSpeed = 0.0;
     double zrotationSpeed = 0.0;
     double far = close+rad;
-    Polygon p;
+    render3D.Polygon p;
 
     //Mesh m = new MeshBuilder().readOBJ("C:\\Users\\jonat\\Desktop\\obj\\textFile3.obj","C:\\Users\\jonat\\Desktop\\obj\\textfilepalette.png");
     //Mesh m = new MeshBuilder().readOBJ("C:\\Users\\jonat\\Desktop\\obj\\model_out.obj");
@@ -37,7 +36,7 @@ public class TestPanel extends JPanel {
                                     new Vertex(-1,-1,100,new Vector(0,0,-1)),
                                     new Vertex(-1,1,100,new Vector(0,0,-1))
                             }
-                            ,new Coordinate (0,0,100)
+                            ,new Coordinate(0,0,100)
                     )
             },
             new Coordinate (0,0,100)
@@ -58,6 +57,7 @@ public class TestPanel extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 m.moveTo(new Coordinate(m.getCenter().getX(),(ySlider.getMaximum()/2-x),m.getCenter().getZ()));
                 x = ySlider.getValue();
+                System.out.println("xslider " + x );
             }
         });
         this.add(ySlider);
@@ -70,6 +70,7 @@ public class TestPanel extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 z = zSlider.getValue();
                 m.moveTo(new Coordinate(m.getCenter().getX(),m.getCenter().getY(),z*5));
+                System.out.println("zslider " + z*5);
             }
         });
         this.add(zSlider);
@@ -122,7 +123,7 @@ public class TestPanel extends JPanel {
                         m.moveTo(new Coordinate(0,40,200));
                         break;
                     case "TextFile":
-                        m = new MeshBuilder().readOBJ("C:\\Users\\jonat\\Desktop\\obj\\textFile3.obj","C:\\Users\\jonat\\Desktop\\obj\\textfilepalette.png");
+                        m = new MeshBuilder().readOBJ(".\\assets\\textfile.obj","C:\\Users\\jonat\\Desktop\\obj\\textfilepalette.png");
                         m.moveTo(new Coordinate(0,0,200));
                         break;
                 }
@@ -133,7 +134,7 @@ public class TestPanel extends JPanel {
         m.moveTo(new Coordinate(0,0,200));
     }
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
         //g.clearRect(0,0, Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
         //pi.g);
         /*

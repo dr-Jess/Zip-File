@@ -2,9 +2,8 @@
 package render3D;
 //sorry
 
-import render2D.Coordinate2D;
-import render.Operator;
-import render.Scene;
+import game.Scene;
+import render2D.Coordinate2;
 
 /**
  * 3D Coordinate Class
@@ -136,15 +135,15 @@ public class Coordinate {
                 -height/2 < this.y && this.y < height/2;
     }
 
-    public Coordinate2D translateToCameraView(){
+    public Coordinate2 translateToCameraView(){
         Coordinate mod = getTransformedPoint();
         double zMod = Scene.PLANE_DISTANCE_FROM_CAMERA/(this.z+ 0.5*Scene.PLANE_DISTANCE_FROM_CAMERA);
         double x2D = mod.getX() * Scene.PLANE_DISTANCE_FROM_CAMERA/(mod.getZ()+1) + Scene.SCREEN_CENTER.getX(); //Scene.SCREEN_CENTER.getX() + this.x * zMod;
         double y2D = mod.getY() * Scene.PLANE_DISTANCE_FROM_CAMERA/(mod.getZ()+1) + Scene.SCREEN_CENTER.getY();
 
-        //x2D = mod.getX() * Scene.PLANE_DISTANCE_FROM_CAMERA * Math.atan(mod.getZ()) + Scene.SCREEN_CENTER.getX(); //Scene.SCREEN_CENTER.getX() + this.x * zMod;
-        //y2D = mod.getY() * Scene.PLANE_DISTANCE_FROM_CAMERA * Math.atan(mod.getZ()) + Scene.SCREEN_CENTER.getY();
-        return new Coordinate2D((int) Math.round(x2D), (int) Math.round(y2D));
+        //x2D = mod.getX() * Scene.PLANE_DISTANCE_FROM_CAMERA * (Math.PI * 0.5 - Math.atan(mod.getZ()/10)) + Scene.SCREEN_CENTER.getX(); //Scene.SCREEN_CENTER.getX() + this.x * zMod;
+        //y2D = mod.getY() * Scene.PLANE_DISTANCE_FROM_CAMERA * (Math.PI * 0.5 - Math.atan(mod.getZ()/10)) + Scene.SCREEN_CENTER.getY();
+        return new Coordinate2((int) Math.round(x2D), (int) Math.round(y2D));
     }
 
     public Coordinate getTransformedPoint(){

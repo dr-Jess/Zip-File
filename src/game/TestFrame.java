@@ -1,9 +1,10 @@
-package render;
+package game;
 
 import javax.swing.*;
 
 public class TestFrame extends JFrame {
     public static void main(String[] args) {
+        HomeScreen h = new HomeScreen();
         TestPanel p = new TestPanel();
         TestFrame f = new TestFrame();
         f.add(p);

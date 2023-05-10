@@ -1,4 +1,4 @@
-package render;
+package render3D;
 
 public class Operator {
     public static boolean almostEqual(double a, double b, double eps){

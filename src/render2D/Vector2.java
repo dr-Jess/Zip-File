@@ -1,20 +1,20 @@
 package render2D;
 
-import render.Operator;
+import render3D.Operator;
 
-public class Vector2D {
+public class Vector2 {
     private final int dx, dy;
-    public static final Vector2D ZERO = new Vector2D(0,0);
+    public static final Vector2 ZERO = new Vector2(0,0);
 
-    public static final Vector2D X = new Vector2D(1,0);
-    public static final Vector2D Y = new Vector2D(0,1);
+    public static final Vector2 X = new Vector2(1,0);
+    public static final Vector2 Y = new Vector2(0,1);
 
-    public Vector2D(int dx, int dy){
+    public Vector2(int dx, int dy){
         this.dx = dx;
         this.dy = dy;
     }
 
-    public Vector2D(Coordinate2D start, Coordinate2D end){
+    public Vector2(Coordinate2 start, Coordinate2 end){
         this.dx = end.getX() - start.getX();
         this.dy = end.getY() - start.getY();
     }
@@ -27,7 +27,7 @@ public class Vector2D {
         return this.dy;
     }
 
-    public double dotProduct(Vector2D other){
+    public double dotProduct(Vector2 other){
         double x = this.dx * other.getDx();
         double y = this.dy * other.getDy();
         return x + y;
@@ -42,32 +42,32 @@ public class Vector2D {
         return Math.sqrt(deltaX+deltaY);
     }
 
-    public Vector2D add(Vector2D v){
-        return new Vector2D(
+    public Vector2 add(Vector2 v){
+        return new Vector2(
                 dx + v.getDx(),
                 dy + v.getDy()
         );
     }
 
-    public Vector2D subtract(Vector2D v){
-        return new Vector2D(
+    public Vector2 subtract(Vector2 v){
+        return new Vector2(
                 dx - v.getDx(),
                 dy - v.getDy()
         );
     }
 
-    public Vector2D multiply(double factor){
-        return new Vector2D(
+    public Vector2 multiply(double factor){
+        return new Vector2(
                 (int) (dx * factor),
                 (int) (dy * factor)
         );
     }
 
-    public Coordinate2D toCoordinate(){
-        return new Coordinate2D(dx,dy);
+    public Coordinate2 toCoordinate(){
+        return new Coordinate2(dx,dy);
     }
 
-    public static double angleBetween(Vector2D a, Vector2D b){
+    public static double angleBetween(Vector2 a, Vector2 b){
         double dot = a.dotProduct(b);
         double aLen = a.getMagnitude();
         double bLen = b.getMagnitude();
@@ -75,8 +75,8 @@ public class Vector2D {
     }
 
     public boolean equals(Object o){
-        if(o instanceof Vector2D){
-            Vector2D v = (Vector2D) o;
+        if(o instanceof Vector2){
+            Vector2 v = (Vector2) o;
             return Operator.almostEqual(dx, v.getDx(), 1e-10) &&
                     Operator.almostEqual(dy, v.getDy(), 1e-10);
         }

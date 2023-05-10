@@ -1,4 +1,8 @@
-package render;
+package game;
+
+import render2D.Coordinate2;
+import render3D.Coordinate;
+import render3D.Mesh;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -9,9 +13,9 @@ public class Scene {
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
     public static final double PLANE_DISTANCE_FROM_CAMERA = (0.5 * Scene.SCREEN_WIDTH) / Math.tan(Math.toRadians(0.5 * Scene.FIELD_OF_VIEW));
-    public static final Coordinate2D SCREEN_CENTER = new Coordinate2D(SCREEN_WIDTH/2,SCREEN_HEIGHT/2);
+    public static final Coordinate2 SCREEN_CENTER = new Coordinate2(SCREEN_WIDTH/2,SCREEN_HEIGHT/2);
 
-    private ArrayList<Entity> objects = new ArrayList<Entity>();
+    private ArrayList<Mesh> objects = new ArrayList<Mesh>();
 
     public Scene(){
 
@@ -26,9 +30,7 @@ public class Scene {
     }
 
     public void rotateView(double xRotation, double yRotation, double zRotation){
-        for(Entity e: objects){
 
-        }
     }
 
 }

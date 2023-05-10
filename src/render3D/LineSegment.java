@@ -1,7 +1,6 @@
 package render3D;
 
-import render2D.LineSegment2D;
-import render.Operator;
+import render2D.LineSegment2;
 
 public class LineSegment {
 
@@ -108,8 +107,8 @@ public class LineSegment {
         return other.isEndpoint(this.start) || other.isEndpoint(this.end);
     }
 
-    public LineSegment2D translateToCameraView(){
-        return new LineSegment2D(start.translateToCameraView(), end.translateToCameraView());
+    public LineSegment2 translateToCameraView(){
+        return new LineSegment2(start.translateToCameraView(), end.translateToCameraView());
     }
 
     public boolean equals(Object o) {

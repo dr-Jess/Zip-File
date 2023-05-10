@@ -1,7 +1,6 @@
 package render3D;
 
-import render.Operator;
-import render2D.Polygon2D;
+import render2D.Polygon2;
 
 import java.awt.*;
 
@@ -36,8 +35,8 @@ public class MeshPolygon extends Polygon{
         normal = normal.incrementRotation(xRotation, yRotation, zRotation);
     }
 
-    public Polygon2D translateToCameraView(){
-        Polygon2D p = new Polygon2D(super.getPoints());
+    public Polygon2 translateToCameraView(){
+        Polygon2 p = new Polygon2(super.getPoints());
         p.setColor(this.getColor());
         return p;
     }

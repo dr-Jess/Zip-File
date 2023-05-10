@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import render2D.Polygon2D;
+import render2D.Polygon2;
 
 public class Polygon implements Comparable{
     private Coordinate[] points;
@@ -196,7 +196,7 @@ public class Polygon implements Comparable{
     }
 
     public double zBuffer(){
-        double near = -100;
+        double near = -1;
         double far = 1000;
 
         return ((far + near) / (far - near)) + (1/getAverageDistanceFromCamera()) * (-2 * (far * near) / (far - near));
@@ -239,8 +239,8 @@ public class Polygon implements Comparable{
         return p;
     };
 
-    public Polygon2D translateToCameraView(){
-        Polygon2D p = new Polygon2D(points);
+    public Polygon2 translateToCameraView(){
+        Polygon2 p = new Polygon2(points);
         p.setColor(this.color);
         return p;
     }

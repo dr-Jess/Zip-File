@@ -8,14 +8,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import render2D.Coordinate2D;
+import render2D.Coordinate2;
 
 import javax.imageio.ImageIO;
 
 public class MeshBuilder {
     ArrayList<Vertex> vertices = new ArrayList<>();
     ArrayList<Vector> vectors = new ArrayList<>();
-    ArrayList<Coordinate2D> vertexTextures = new ArrayList<>();
+    ArrayList<Coordinate2> vertexTextures = new ArrayList<>();
     ArrayList<MeshPolygon> faces = new ArrayList<>();
 
     public Mesh readOBJ(String path){
@@ -47,14 +47,14 @@ public class MeshBuilder {
                 case "vt":
                     double tx = Double.parseDouble(args[1]);
                     double ty = Double.parseDouble(args[2]);
-                    addTextureCoordinate(new Coordinate2D(0,0));
+                    addTextureCoordinate(new Coordinate2(0,0));
                     break;
                 case "f":
                     Vertex[] points = new Vertex[args.length - 1];
                     for(int i = 1; i < args.length; i++){
                         String[] args1 = args[i].split("/");
                         Vertex v = vertices.get(Integer.parseInt(args1[0])-1);
-                        Coordinate2D vt;
+                        Coordinate2 vt;
                         Vector vn = vectors.get(Integer.parseInt(args1[2])-1);
                         v.setNormal(vn);
                         points[i-1] = v;
@@ -109,15 +109,15 @@ public class MeshBuilder {
                     double ty = Double.parseDouble(args[2]) * texture.getHeight();
                     if(tx >= texture.getWidth())
                         tx = texture.getHeight() - 1;
-                    addTextureCoordinate(new Coordinate2D((int) tx, (int) ty));
+                    addTextureCoordinate(new Coordinate2((int) tx, (int) ty));
                     break;
                 case "f":
                     Vertex[] points = new Vertex[args.length - 1];
-                    Coordinate2D[] colorRefs = new Coordinate2D[args.length - 1];
+                    Coordinate2[] colorRefs = new Coordinate2[args.length - 1];
                     for(int i = 1; i < args.length; i++){
                         String[] args1 = args[i].split("/");
                         Vertex v = vertices.get(Integer.parseInt(args1[0])-1);
-                        Coordinate2D vt = vertexTextures.get(Integer.parseInt(args1[1])-1);
+                        Coordinate2 vt = vertexTextures.get(Integer.parseInt(args1[1])-1);
                         Vector vn = vectors.get(Integer.parseInt(args1[2])-1);
                         v.setNormal(vn);
                         points[i-1] = v;
@@ -127,7 +127,7 @@ public class MeshBuilder {
                     int red = 0;
                     int green = 0;
                     int blue = 0;
-                    for(Coordinate2D c: colorRefs){
+                    for(Coordinate2 c: colorRefs){
                         Color temp = new Color(texture.getRGB(c.getX(), c.getY()));
                         red += temp.getRed();
                         green += temp.getGreen();
@@ -141,7 +141,7 @@ public class MeshBuilder {
                     addFace(p);
                     break;
             }
-        }
+        }/*
         ArrayList<MeshPolygon> unique = new ArrayList<>();
         ArrayList<MeshPolygon> blacklist = new ArrayList<>();
         for(MeshPolygon mp: faces){
@@ -153,7 +153,10 @@ public class MeshBuilder {
                 blacklist.add(mp);
             }
         }
-        return new Mesh(unique, Coordinate.ORIGIN);
+        */
+        Mesh m = new Mesh(faces, Coordinate.ORIGIN);
+        m.incrementRotation(-Math.PI,0,0);
+        return m;
     }
 
     public void addVertex(Vertex v){
@@ -164,7 +167,7 @@ public class MeshBuilder {
         vectors.add(v);
     }
 
-    public void addTextureCoordinate(Coordinate2D c){
+    public void addTextureCoordinate(Coordinate2 c){
         vertexTextures.add(c);
     }
 

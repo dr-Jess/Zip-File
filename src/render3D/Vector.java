@@ -1,7 +1,5 @@
 package render3D;
 
-import render.Operator;
-
 public class Vector {
     private final double dx, dy, dz;
     public static final Vector ZERO = new Vector(0,0,0);
