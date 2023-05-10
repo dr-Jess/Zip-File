@@ -8,7 +8,7 @@ public class Directory extends File{
     private File[] children = {};
 
     public Directory(String name){
-
+        super(name);
     }
 
     public Directory(Directory parent, String name){
