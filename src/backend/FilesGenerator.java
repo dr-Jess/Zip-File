@@ -6,7 +6,8 @@ import java.io.*;
 
 public class FilesGenerator {
     private static java.io.File[] imageFiles = new java.io.File("assets" + java.io.File.separator + "image-files").listFiles();
-    private static String[][]
+    private static java.io.File[] textFiles = new java.io.File("assets" + java.io.File.separator + "text-files").listFiles();
+    private static String[][] directoryNames = {{"~"},{},{},{}};
 
     /**
      * Generates a branching file system.
@@ -40,6 +41,9 @@ public class FilesGenerator {
     }
 
     private static File fileSelector(FileType fileType){
-
+        switch(fileType){
+            case DIRECTORY:
+                break;
+        }
     }
 }
