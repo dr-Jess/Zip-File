@@ -92,8 +92,8 @@ public class Polygon implements Comparable{
         return lineSegments;
     }
 
-    /*
-    Checks if a ray perpendicular to the XY plane at c intersects the polygon.
+    /**
+     * Checks if a ray perpendicular to the XY plane at c intersects the polygon.
      */
     public boolean intersects(Coordinate c){
         double leftX = Double.MAX_VALUE;
@@ -202,6 +202,7 @@ public class Polygon implements Comparable{
         return ((far + near) / (far - near)) + (1/getAverageDistanceFromCamera()) * (-2 * (far * near) / (far - near));
     }
 
+
     public double getAverageDistanceFromCamera(){
         double avg = 0;
         for(Coordinate c: points){
@@ -275,6 +276,13 @@ public class Polygon implements Comparable{
         return 0;
     }
 
+    public boolean hasPoint(Coordinate c){
+        for(Coordinate check: points){
+            if(c.equals(check))
+                return true;
+        }
+        return false;
+    }
     public String toString(){
         StringBuilder ret = new StringBuilder();
         for(Coordinate c: points){

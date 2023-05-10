@@ -2,6 +2,7 @@ package render3D;
 
 import game.Scene;
 import render2D.BoundingBox2;
+import render2D.Coordinate2;
 import render2D.Polygon2;
 
 import java.awt.*;
@@ -13,6 +14,8 @@ public class Mesh {
     Coordinate center;
 
     public Mesh(MeshPolygon[] polygons, Coordinate center){
+        polygons[1].setColor(Color.GREEN);
+        polygons[2].setColor(Color.BLUE);
         this.polygons = polygons;
         this.center = center;
     }
@@ -42,12 +45,12 @@ public class Mesh {
             Vector ref = new Vector(Coordinate.ORIGIN, avg);
             double check = buffered.get(i).getNormal().dotProduct(ref);
             //buffered.get(i).getNormal().getDz() <= 0
-            if(check <= 0) {
+            //if(check <= 0) {
                 Polygon2 p2d = buffered.get(i).translateToCameraView();
                 g.setColor(p2d.getColor());
                 g.fillPolygon(p2d.getXPoints(), p2d.getYPoints(), p2d.numPoints());
                 g.drawPolygon(p2d.getXPoints(), p2d.getYPoints(), p2d.numPoints());
-            }
+            //}
         }
     }
 
@@ -55,6 +58,72 @@ public class Mesh {
         Arrays.sort(polygons);
         return new ArrayList<>(Arrays.asList(polygons));
     }
+
+    public ArrayList<MeshPolygon> sortPolygons2(){
+        /*
+        for each polygon:
+        separate all other polygons into:
+            behind
+            no overlap,
+            in front
+         maintaining their order
+         then concatenate into behind, no overlap, in front
+         */
+        ArrayList<MeshPolygon> sorted = new ArrayList<>(Arrays.asList(polygons));
+
+        for(MeshPolygon p: polygons){
+            ArrayList<MeshPolygon> behind = new ArrayList<>();
+            ArrayList<MeshPolygon> noOverlap = new ArrayList<>();
+            ArrayList<MeshPolygon> inFront = new ArrayList<>();
+            Vector normal = p.getNormal();
+            for(MeshPolygon check: sorted){
+                if(p != check) {
+                    boolean overlap = false;
+                    Coordinate intersect = Coordinate.ORIGIN;
+                    for (Coordinate point : check.getPoints()) {
+                        Coordinate2 transformed = point.translateToCameraView();
+                        if(p.translateToCameraView().intersects(transformed)){
+                            System.out.println("AAA" + ((Polygon)p).getColor().equals(Color.GREEN));
+                            overlap = true;
+                            intersect = point;
+                        }
+                    }
+                    if(overlap) {
+                        Coordinate ref = p.getPoint(0);
+                        double distance = Math.sqrt(Math.pow(ref.getX()-intersect.getX(),2)+Math.pow(ref.getX()-intersect.getX(),2));
+                        double x1 = normal.getDx();
+                        double y1 = normal.getDy();
+                        double z1 = normal.getDz();
+                        double xba = intersect.getX() - ref.getX();
+                        double yba = intersect.getY() - ref.getY();
+                        double za = ref.getZ();
+                        double zb = za-(x1*xba+y1*yba)/z1;
+                        if(((Polygon)check).getColor().equals(Color.GREEN)){
+                            System.out.println(zb > intersect.getZ() ? "OVER" : "UNDER");
+                        }
+                        //System.out.println(normal + " " + ref + " " + intersect + " " + zb);
+                        if(zb > intersect.getZ()){
+                            behind.add(check);
+                        }
+                        else{
+                            inFront.add(check);
+                        }
+                    }
+                    else{
+                        noOverlap.add(check);
+                    }
+                }
+            }
+            //System.out.println(behind.size() + " " + noOverlap.size() + " " + inFront.size());
+            ArrayList<MeshPolygon> temp = new ArrayList<>(behind);
+            temp.addAll(noOverlap);
+            temp.add(p);
+            temp.addAll(inFront);
+            sorted = temp;
+        }
+        return sorted;
+    }
+
 
     double[][] zDepths = new double[Scene.SCREEN_WIDTH][Scene.SCREEN_HEIGHT];
     Color[][] screen = new Color[Scene.SCREEN_WIDTH][Scene.SCREEN_HEIGHT];

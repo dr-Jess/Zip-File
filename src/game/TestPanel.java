@@ -37,10 +37,29 @@ public class TestPanel extends JPanel {
                                     new Vertex(-1,1,100,new Vector(0,0,-1))
                             }
                             ,new Coordinate(0,0,100)
-                    )
+                    ),
+                    new MeshPolygon(
+                            new Vertex[]{
+                                    new Vertex(1,1,102,new Vector(0,0,1)),
+                                    new Vertex(1,-1,102,new Vector(0,0,1)),
+                                    new Vertex(-1,-1,102,new Vector(0,0,1)),
+                                    new Vertex(-1,1,102,new Vector(0,0,1))
+                            }
+                            ,new Coordinate(0,0,100)
+                    ),
+                    new MeshPolygon(
+                            new Vertex[]{
+                                    new Vertex(1,1,100,new Vector(1,0,0)),
+                                    new Vertex(1,-1,100,new Vector(1,0,0)),
+                                    new Vertex(1,-1,102,new Vector(1,0,0)),
+                                    new Vertex(1,1,102,new Vector(1,0,0))
+                            }
+                            ,new Coordinate(0,0,100)
+                    ),
             },
             new Coordinate (0,0,100)
             );
+
     public TestPanel(){
         p = new Polygon(new Coordinate[]{
                 new Coordinate(-rad,rad,100),
@@ -123,7 +142,7 @@ public class TestPanel extends JPanel {
                         m.moveTo(new Coordinate(0,40,200));
                         break;
                     case "TextFile":
-                        m = new MeshBuilder().readOBJ(".\\assets\\textfile.obj","C:\\Users\\jonat\\Desktop\\obj\\textfilepalette.png");
+                        m = new MeshBuilder().readOBJ(".\\assets\\folder (1).obj","C:\\Users\\jonat\\Desktop\\obj\\textfilepalette.png");
                         m.moveTo(new Coordinate(0,0,200));
                         break;
                 }
