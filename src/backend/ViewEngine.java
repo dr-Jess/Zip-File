@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 public class ViewEngine {
     BackEngine backEngine;
     JFrame frame;
-    JPanel homeScreen, gamePlayScreen;
+    JPanel homeScreen, gamePlayScreen, endGameScreen;
     public ViewEngine(BackEngine backEngine){
         this.backEngine = backEngine;
         frame = new JFrame("Zip-File");
@@ -30,4 +30,9 @@ public class ViewEngine {
         frame.pack();
     }
 
+    public void endGame(long time){
+        endGameScreen = new EndGameScreen(time, backEngine);
+        frame.setContentPane(endGameScreen);
+        frame.pack();
+    }
 }

@@ -1,5 +1,7 @@
 package game;
 
+import backend.BackEngine;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -8,13 +10,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class EndGameScreen extends JPanel implements MouseListener, MouseMotionListener {
+public class EndGameScreen extends JPanel{
     private double titleY = 0.0;
     BufferedImage title;
     BufferedImage shadow;
     BufferedImage click;
-    public EndGameScreen(){
-        setSize(Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
+    BackEngine backEngine;
+    float endOpacity = 1F;
+    long time;
+    public EndGameScreen(long time, BackEngine backEngine){
+        this.backEngine = backEngine;
+        this.setFocusable(true);
+        this.time = time;
         try {
             title = ImageIO.read(new File(".\\assets\\title.png"));
             shadow = ImageIO.read(new File(".\\assets\\shadow.png"));
@@ -22,6 +29,7 @@ public class EndGameScreen extends JPanel implements MouseListener, MouseMotionL
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        startFade();
         Timer t = new Timer(1,new ActionListener(){
             double t = 0;
             @Override
@@ -33,6 +41,33 @@ public class EndGameScreen extends JPanel implements MouseListener, MouseMotionL
             }
         });
         t.start();
+    }
+    private void startFade(){
+        final Timer frameTimer = new Timer(1000/60,null);
+        frameTimer.addActionListener(new ActionListener() {
+            double opacityRemaining = 1;
+            double lastTime = System.nanoTime();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double currentTime = System.nanoTime();
+                opacityRemaining-=(currentTime-lastTime)/500000000;
+                if(opacityRemaining<=0){
+                    frameTimer.stop();
+                    opacityRemaining = 0;
+                    endOpacity = 0;
+                    repaint();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                endOpacity= (float) (opacityRemaining);
+                repaint();
+                lastTime = currentTime;
+            }
+        });
+        frameTimer.start();
     }
 
     @Override
@@ -49,40 +84,8 @@ public class EndGameScreen extends JPanel implements MouseListener, MouseMotionL
         int cx = (Scene.SCREEN_WIDTH - click.getWidth())/2;
         int cy = (Scene.SCREEN_HEIGHT - click.getHeight())/2+240;
         g.drawImage(click,cx,cy-(int)(8*titleY),null);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        repaint();
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));
+        g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
     }
 }
