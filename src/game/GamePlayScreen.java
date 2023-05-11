@@ -94,7 +94,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     }
 
     public GamePlayScreen(Directory directory, BackEngine backEngine){
-        this.backEngine = backEngine
+        this.backEngine = backEngine;
         this.setFocusable(true);
         try {
             shadow = ImageIO.read(new java.io.File(".\\assets\\gameback.png"));
