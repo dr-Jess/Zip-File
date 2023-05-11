@@ -1,2 +1,1 @@
-As it pass’d me flying by—
-From the thunder, and the storm—
+public static void main(String[] args)
