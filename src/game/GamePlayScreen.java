@@ -249,6 +249,34 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         rendered.get(2).rotateAbout(Coordinate.ORIGIN, 0, Math.PI / 6, 0);
     }
 
+    public void resetRendered(File f){
+
+        meshes = new Mesh[files.length];
+
+        index = meshes.length / 2 + 1;
+
+        for (int i = 0; i < files.length; i++) {
+            meshes[i] = files[i].getType().getMesh();
+            meshes[i].moveTo(meshes[i].getCenter().translatedBy(0, 0, 30));
+            if(files[i] == f)
+                index = i;
+        }
+
+        renderedFiles = new ArrayList<>(Arrays.asList(getFile(index + 1), getFile(index), getFile(index - 1)));
+        rendered = new ArrayList<>(Arrays.asList(
+                renderedFiles.get(0).getType().getMesh(),
+                renderedFiles.get(1).getType().getMesh(),
+                renderedFiles.get(2).getType().getMesh()));
+
+        for (Mesh m : rendered) {
+            m.moveTo(new Coordinate(0, 8, renderRadius));
+        }
+
+        rendered.get(0).rotateAbout(Coordinate.ORIGIN, 0, -Math.PI / 6, 0);
+        rendered.get(1).rotateAbout(Coordinate.ORIGIN, 0, 0, 0);
+        rendered.get(2).rotateAbout(Coordinate.ORIGIN, 0, Math.PI / 6, 0);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -580,11 +608,12 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 incorrectGuess = false;
                 userEntry = "";
                 readingFile = f;
-            }
-            else if(currentDirectory != root){
-                this.currentDirectory = currentDirectory.getParent();
-                files = currentDirectory.getChildren();
-                resetRendered();
+        }
+        else if(currentDirectory != root){
+            Directory temp = currentDirectory;
+            this.currentDirectory = currentDirectory.getParent();
+            files = currentDirectory.getChildren();
+            resetRendered(temp);
         }
         repaint();
     }
