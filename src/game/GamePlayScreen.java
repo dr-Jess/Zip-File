@@ -139,7 +139,9 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                     repaint();
                 }
             });
+
         }
+        this.addKeyListener(this);
         //t2.start();
         startFade();
     }
