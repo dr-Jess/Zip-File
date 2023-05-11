@@ -257,13 +257,13 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         int sy = (Scene.SCREEN_HEIGHT - shadow.getHeight())/2;
         g.drawImage(shadow,sx,sy,null);
 
+        g.setFont(new Font("Courier New", Font.BOLD, 30));
         //g.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
         for(int i = 0; i < rendered.size(); i++){
             rendered.get(i).render(g);
 
 
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Courier New", Font.BOLD, 30));
             FontMetrics metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
             String name = renderedFiles.get(i).getName();
             int width = metrics.stringWidth(name);
@@ -339,9 +339,30 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 g.setColor(Color.BLACK);
                 g.drawString(userEntry, 370,360);
             }
-            int iconX = Scene.SCREEN_WIDTH/2-down.getWidth()/2 - metrics.stringWidth(" to close")/2;
-            g.drawImage(down,iconX,500,null);
-            g.drawString(" to close", Scene.SCREEN_WIDTH/2 - metrics.stringWidth(" to close")/2, 530);
+            g.setColor(Color.WHITE);
+            int downX = Scene.SCREEN_WIDTH/2 - down.getWidth()/2 - metrics.stringWidth(" to close")/2;
+            g.drawImage(down,downX,500,null);
+            g.drawString(" to close", Scene.SCREEN_WIDTH/2 + down.getWidth()/2 - metrics.stringWidth(" to close")/2, 540);
+        }else {
+            g.setFont(new Font("Courier New", Font.BOLD, 20));
+            int upX = Scene.SCREEN_WIDTH / 2 - up.getWidth() / 2 - metrics.stringWidth(" to interact") / 2;
+            g.drawImage(up, upX, 510, null);
+            g.drawString(" to interact", Scene.SCREEN_WIDTH / 2 + up.getWidth() / 2 - metrics.stringWidth(" to interact") / 2, 540);
+
+            int leftX = Scene.SCREEN_WIDTH / 6 - left.getWidth() / 2 - metrics.stringWidth(" to scroll left") / 2;
+            g.drawImage(left, leftX, 580, null);
+            g.drawString(" to scroll left", Scene.SCREEN_WIDTH / 6  + left.getWidth() / 2 - metrics.stringWidth(" to scroll left") / 2, 610);
+
+            int rightX = Scene.SCREEN_WIDTH*5/6 + right.getWidth() / 2 - metrics.stringWidth(" to scroll right") / 2;
+            g.drawImage(right, rightX, 580, null);
+            g.drawString(" to scroll right", Scene.SCREEN_WIDTH*5/6 + right.getWidth()*3/2 - metrics.stringWidth(" to scroll right") / 2, 610);
+            if(currentDirectory != root) {
+                int downX = Scene.SCREEN_WIDTH / 2 - down.getWidth() / 2 - metrics.stringWidth(" to go back") / 2;
+                g.drawImage(down, downX, 580, null);
+                g.drawString(" to go back", Scene.SCREEN_WIDTH / 2 + down.getWidth() / 2 - metrics.stringWidth(" to go back") / 2, 610);
+            }
+
+
         }
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.white);
@@ -482,11 +503,11 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         if(!rotating && !reading) {
             //Left
             if (e.getKeyCode() == 37) {
-                rotate(1);
+                rotate(-1);
             }
             //Right
             else if (e.getKeyCode() == 39) {
-                rotate(-1);
+                rotate(1);
             }
             //Up
             else if(e.getKeyCode() == 38){
