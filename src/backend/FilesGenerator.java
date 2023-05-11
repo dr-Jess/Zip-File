@@ -3,11 +3,14 @@ import files.*;
 import files.File;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilesGenerator {
-    private static java.io.File[] imageFiles = new java.io.File("assets" + java.io.File.separator + "image-files").listFiles();
-    private static java.io.File[] textFiles = new java.io.File("assets" + java.io.File.separator + "text-files").listFiles();
-    private static String[] textNames = {"friend", "bait", "thunder", "slip", "insurance", "start", "act", "juice", "jump", "ink", "dime", "cat", "calculator", "secretary", "love", "fly", "walk", "riddle", "planes", "trip", "wall", "bridge", "reward", "end", "throat", "weather", "cracker", "hobbies", "hair", "spot", "join", "cows", "toothpaste", "pie", "magic", "key", "yak", "vase", "stretch", "smash", "squirrel", "flower", "cherry", "territory", "station", "rhythm", "waves", "decision", "hot", "camp", "rain", "cellar", "popcorn", "sand", "governor", "mine", "pull", "mark", "sofa", "authority", "grandfather", "rail", "development", "scene", "effect", "house", "pollution", "coat", "hall", "van", "weight", "friction", "yarn", "box", "society", "cart", "wash", "plastic", "dinner", "sponge", "stamp", "cause", "kittens", "root", "branch", "air", "mist", "flesh", "activity", "table", "spy", "fireman", "cough", "bedroom", "fire", "shelf", "metal", "children", "behavior", "comparison"};
+    private static ArrayList<java.io.File> imageFiles = new ArrayList<java.io.File>(List.of(new java.io.File("assets" + java.io.File.separator + "image-files").listFiles()));
+    private static ArrayList<java.io.File> textFiles = new ArrayList<java.io.File>(List.of(new java.io.File("assets" + java.io.File.separator + "text-files").listFiles()));
+    private static ArrayList<String> textNames = new ArrayList<String>(List.of("friend", "bait", "thunder", "slip", "insurance", "start", "act", "juice", "jump", "ink", "dime", "cat", "calculator", "secretary", "love", "fly", "walk", "riddle", "planes", "trip", "wall", "bridge", "reward", "end", "throat", "weather", "cracker", "hobbies", "hair", "spot", "join", "cows", "toothpaste", "pie", "magic", "key", "yak", "vase", "stretch", "smash", "squirrel", "flower", "cherry", "territory", "station", "rhythm", "waves", "decision", "hot", "camp", "rain", "cellar", "popcorn", "sand", "governor", "mine", "pull", "mark", "sofa", "authority", "grandfather", "rail", "development", "scene", "effect", "house", "pollution", "coat", "hall", "van", "weight", "friction", "yarn", "box", "society", "cart", "wash", "plastic", "dinner", "sponge", "stamp", "cause", "kittens", "root", "branch", "air", "mist", "flesh", "activity", "table", "spy", "fireman", "cough", "bedroom", "fire", "shelf", "metal", "children", "behavior", "comparison"));
 
     /**
      * Generates a branching file system.
@@ -32,11 +35,12 @@ public class FilesGenerator {
             int imageCount = layers[i+1].length;
             int startingIndex = (int)(Math.random()*layers[i].length);
             for(int j = 1; j<=imageCount; j++){
-                layers[i][(startingIndex+(3*j))%layers[i].length].addChild((Image) fileSelector(FileType.IMAGE));
+                layers[i][(startingIndex+(3*j))%layers[i].length].addChild((Image) fileSelector(FileType.IMAGE,layers[i][(startingIndex+(3*j))%layers[i].length]));
             }
         }
         //adding zip file
-        root.addChild(new Zip(root,"Unlock me!.zip"));
+        Zip zipFile = new Zip(root,"Unlock me!.zip");
+        root.addChild(zipFile);
         //adding solution text files
         int directoriesCount = -1;
         for(Directory[] layer: layers){
@@ -58,13 +62,19 @@ public class FilesGenerator {
             }
         }
         int currentIndex = 1;
+        int pinIndex = 0;
         for (int i=layers.length-2;i>=0;i--){
             for (int j=0; j<layers[i].length;j++){
                 for (int solutionIndex: solutionIndices){
                     if (currentIndex == solutionIndex){
-                        layers[i][j].addChild(new Text(layers[i][j],));
+                        int index = (int) (Math.random() * textNames.size());
+                        String name = textNames.get(index) + ".txt";
+                        textNames.remove(index);
+                        layers[i][j].addChild(new Text(layers[i][j],name, "Character"+(pinIndex+1)+"of solution: "+(zipFile.getPassword().charAt(pinIndex)+"")));
+                        pinIndex++;
                     }
                 }
+                currentIndex++;
             }
         }
     }
@@ -72,19 +82,19 @@ public class FilesGenerator {
     private static void generateTree(int depth, int widthMin, int error, Directory root){
         if(depth>1){
             for (int i = 0; i<3; i++){
-                Directory newDirectory = (Directory) fileSelector(FileType.DIRECTORY);
+                Directory newDirectory = (Directory) fileSelector(FileType.DIRECTORY,root);
                 root.addChild(newDirectory);
                 generateTree(depth-1,widthMin,error,newDirectory);
             }
             int count = (int)(Math.random()*error)+widthMin;
             for (int i = 0; i<count; i++){
-                root.addChild((Text) fileSelector(FileType.TEXT));
+                root.addChild((Text) fileSelector(FileType.TEXT,root));
             }
 
         }else{
             int count = (int)(Math.random()*error)+widthMin;
             for (int i = 0; i<count; i++){
-                root.addChild((Text) fileSelector(FileType.TEXT));
+                root.addChild((Text) fileSelector(FileType.TEXT,root));
             }
         }
     }
@@ -106,18 +116,37 @@ public class FilesGenerator {
     }
 
     private static File fileSelector(FileType fileType, Directory parent){
-        File returnFile;
+        File returnFile = null;
         switch(fileType){
             case DIRECTORY -> {
-                String name = textNames[(int)(Math.random()* textNames.length)];
+                int index = (int)(Math.random()* textNames.size());
+                String name = textNames.get(index);
+                textNames.remove(index);
                 returnFile = new Directory(parent, name);
             }
             case TEXT -> {
-
+                int index = (int) (Math.random() * textNames.size());
+                String name = textNames.get(index) + ".txt";
+                textNames.remove(index);
+                index = (int) (Math.random() * textNames.size());
+                String text = null;
+                try {
+                    text = new String(Files.readAllBytes(textFiles.get(index).toPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                textFiles.remove(index);
+                returnFile = new Text(parent, name, text);
             }
             case IMAGE -> {
-
+                int index = (int) (Math.random() * textNames.size());
+                java.io.File image = imageFiles.get(index);
+                String path = image.getPath();
+                String name = image.getName();
+                imageFiles.remove(index);
+                returnFile = new Image(parent,name,path);
             }
         }
+        return returnFile;
     }
 }
