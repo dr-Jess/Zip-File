@@ -289,8 +289,10 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         for(int i = 0; i < rendered.size(); i++){
             rendered.get(i).render(g);
 
-
-            g.setColor(Color.WHITE);
+            if(renderedFiles.get(i).hasBeenViewed())
+                g.setColor(Color.GRAY);
+            else
+                g.setColor(Color.WHITE);
             FontMetrics metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
             String name = renderedFiles.get(i).getName();
             int width = metrics.stringWidth(name);
@@ -298,6 +300,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             int y = 200-(int) (0.1*Math.abs(rendered.get(i).getyRotation())*Scene.SCREEN_WIDTH/2);
             g.drawString(name,x,y);
         }
+        g.setColor(Color.WHITE);
         FontMetrics metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
         Directory[] path = currentDirectory.getPath();
         String url = ":\\";
@@ -336,10 +339,24 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 String temp = "";
                 int drawHeight = 150;
                 for(char c: text.toCharArray()){
-                    if(metrics.stringWidth(temp) > 500){
-                        g.drawString(temp, 350,drawHeight);
+                    if(metrics.stringWidth(temp) > 500 || c == '\n'){
+                        StringBuilder remainder = new StringBuilder();
+                        String toPrint = temp;
+                        if(temp.contains(" ")){
+                            char[] cs = temp.toCharArray();
+                            for(int i = cs.length-1; i >= 0; i--){
+                                if(cs[i] == ' ') {
+                                    toPrint = temp.substring(0,i);
+                                    break;
+                                }
+                                else{
+                                    remainder.insert(0, cs[i]);
+                                }
+                            }
+                        }
+                        g.drawString(toPrint, 350,drawHeight);
                         drawHeight += 40;
-                        temp = "" + c;
+                        temp = remainder.toString() + c;
                     }else{
                         temp+=c;
                     }
@@ -541,9 +558,11 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 interactWithFile();
             }
         }
-        //Down
-        if(e.getKeyCode() == 40){
-            exitInteraction();
+        if(!rotating) {
+            //Down
+            if (e.getKeyCode() == 40) {
+                exitInteraction();
+            }
         }
         if(typing){
             if(48 <= e.getKeyCode() && e.getKeyCode() <= 57){
@@ -579,6 +598,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
 
     private void interactWithFile(){
         File f = getFile(index);
+        f.viewFile();
         switch(f.getType()){
             case ZIP:
                 typing = true;

@@ -41,7 +41,7 @@ public class FilesGenerator {
             }
         }
         //adding zip file and readme
-        root.addChild(new Text(root, "README.txt", "You've been trapped in this file explorer! Find digits  of the passcode hidden in   text files to extract the   ZIP file and escape!                                    Be careful or you might end up running in circles!"));
+        root.addChild(new Text(root, "README.txt", "You've been trapped in this file explorer! Find digits of a passcode hidden in text files to extract the   ZIP file and escape!                                    Be careful or you might end up running in circles!"));
         Zip zipFile = new Zip(root,"Unlock me!.zip");
         root.addChild(zipFile);
         //adding solution text files
@@ -73,7 +73,7 @@ public class FilesGenerator {
                         int index = (int) (Math.random() * textNames.size());
                         String name = textNames.get(index) + ".txt";
                         textNames.remove(index);
-                        layers[i][j].addChild(new Text(layers[i][j],name, "Character "+(pinIndex+1)+" of solution: "+(zipFile.getPassword().charAt(pinIndex)+"")));
+                        layers[i][j].addChild(new Text(layers[i][j],name, "Congratulations!!! Found digit "+(pinIndex+1)+" of the passcode: \n\n"+(zipFile.getPassword().charAt(pinIndex)+"")));
                         pinIndex++;
                     }
                 }

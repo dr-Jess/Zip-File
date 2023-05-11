@@ -4,6 +4,7 @@ public abstract class File {
     private Directory[] path = {};
     private Directory parent;
     private String name;
+    private boolean viewed = false;
 
     public File(String name){
         this.name=name;
@@ -43,5 +44,12 @@ public abstract class File {
 
     public String getName() {
         return name;
+    }
+    public boolean hasBeenViewed(){
+        return viewed;
+    }
+
+    public void viewFile(){
+        viewed = true;
     }
 }
