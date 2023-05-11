@@ -20,7 +20,7 @@ public class FilesGenerator {
      * @param error range of potential width values (error = 3, width anywhere from min to min+3)
      * @param root the root file
      */
-    public static void generate(int depth, int widthMin, int error, Directory root){
+    public static String generate(int depth, int widthMin, int error, Directory root){
         //full trinary tree + text gibberish
         generateTree(depth, widthMin, error, root);
         //trimming branches
@@ -79,6 +79,7 @@ public class FilesGenerator {
                 currentIndex++;
             }
         }
+        return zipFile.getPassword();
     }
 
     private static void generateTree(int depth, int widthMin, int error, Directory root){

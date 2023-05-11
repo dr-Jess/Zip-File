@@ -8,6 +8,11 @@ public class Zip extends Directory{
         generatePassword();
     }
 
+    @Override
+    public FileType getType() {
+        return FileType.ZIP;
+    }
+
     /**
      * @return the zip file's password
      */

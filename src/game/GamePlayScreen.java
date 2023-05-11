@@ -1,5 +1,6 @@
 package game;
 
+import backend.BackEngine;
 import files.Image;
 import render3D.Coordinate;
 import render3D.Mesh;
@@ -91,7 +92,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         this.addKeyListener(this);
     }
 
-    public GamePlayScreen(Directory directory){
+    public GamePlayScreen(Directory directory, BackEngine backEngine){
         this.setFocusable(true);
         try {
             shadow = ImageIO.read(new java.io.File(".\\assets\\gameback.png"));

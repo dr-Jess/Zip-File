@@ -24,7 +24,7 @@ public class ViewEngine {
     }
 
     public void startGame(){
-        gamePlayScreen = new GamePlayScreen(backEngine.getRoot());
+        gamePlayScreen = new GamePlayScreen(backEngine.getRoot(), backEngine);
         frame.setContentPane(gamePlayScreen);
         gamePlayScreen.requestFocus();
         frame.pack();
