@@ -5,12 +5,14 @@ import files.File;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FilesGenerator {
-    private static ArrayList<java.io.File> imageFiles = new ArrayList<java.io.File>(List.of(new java.io.File("assets" + java.io.File.separator + "image-files").listFiles()));
-    private static ArrayList<java.io.File> textFiles = new ArrayList<java.io.File>(List.of(new java.io.File("assets" + java.io.File.separator + "text-files").listFiles()));
-    private static ArrayList<String> textNames = new ArrayList<String>(List.of("friend", "bait", "thunder", "slip", "insurance", "start", "act", "juice", "jump", "ink", "dime", "cat", "calculator", "secretary", "love", "fly", "walk", "riddle", "planes", "trip", "wall", "bridge", "reward", "end", "throat", "weather", "cracker", "hobbies", "hair", "spot", "join", "cows", "toothpaste", "pie", "magic", "key", "yak", "vase", "stretch", "smash", "squirrel", "flower", "cherry", "territory", "station", "rhythm", "waves", "decision", "hot", "camp", "rain", "cellar", "popcorn", "sand", "governor", "mine", "pull", "mark", "sofa", "authority", "grandfather", "rail", "development", "scene", "effect", "house", "pollution", "coat", "hall", "van", "weight", "friction", "yarn", "box", "society", "cart", "wash", "plastic", "dinner", "sponge", "stamp", "cause", "kittens", "root", "branch", "air", "mist", "flesh", "activity", "table", "spy", "fireman", "cough", "bedroom", "fire", "shelf", "metal", "children", "behavior", "comparison"));
+    private static ArrayList<java.io.File> imageFiles = new ArrayList<java.io.File>(Arrays.asList(new java.io.File("assets" + java.io.File.separator + "image-files").listFiles()));
+    private static ArrayList<java.io.File> textFiles = new ArrayList<java.io.File>(Arrays.asList(new java.io.File("assets" + java.io.File.separator + "text-files").listFiles()));
+    private static ArrayList<String> textNames = new ArrayList<String>(Arrays.asList(new String[]{"friend", "bait", "thunder", "slip", "insurance", "start", "act", "juice", "jump", "ink", "dime", "cat", "calculator", "secretary", "love", "fly", "walk", "riddle", "planes", "trip", "wall", "bridge", "reward", "end", "throat", "weather", "cracker", "hobbies", "hair", "spot", "join", "cows", "toothpaste", "pie", "magic", "key", "yak", "vase", "stretch", "smash", "squirrel", "flower", "cherry", "territory", "station", "rhythm", "waves", "decision", "hot", "camp", "rain", "cellar", "popcorn", "sand", "governor", "mine", "pull", "mark", "sofa", "authority", "grandfather", "rail", "development", "scene", "effect", "house", "pollution", "coat", "hall", "van", "weight", "friction", "yarn", "box", "society", "cart", "wash", "plastic", "dinner", "sponge", "stamp", "cause", "kittens", "root", "branch", "air", "mist", "flesh", "activity", "table", "spy", "fireman", "cough", "bedroom", "fire", "shelf", "metal", "children", "behavior", "comparison",
+            "friend", "bait", "thunder", "slip", "insurance", "start", "act", "juice", "jump", "ink", "dime", "cat", "calculator", "secretary", "love", "fly", "walk", "riddle", "planes", "trip", "wall", "bridge", "reward", "end", "throat", "weather", "cracker", "hobbies", "hair", "spot", "join", "cows", "toothpaste", "pie", "magic", "key", "yak", "vase", "stretch", "smash", "squirrel", "flower", "cherry", "territory", "station", "rhythm", "waves", "decision", "hot", "camp", "rain", "cellar", "popcorn", "sand", "governor", "mine", "pull", "mark", "sofa", "authority", "grandfather", "rail", "development", "scene", "effect", "house", "pollution", "coat", "hall", "van", "weight", "friction", "yarn", "box", "society", "cart", "wash", "plastic", "dinner", "sponge", "stamp", "cause", "kittens", "root", "branch", "air", "mist", "flesh", "activity", "table", "spy", "fireman", "cough", "bedroom", "fire", "shelf", "metal", "children", "behavior", "comparison"}));
 
     /**
      * Generates a branching file system.
@@ -28,6 +30,7 @@ public class FilesGenerator {
         for(int i = layers.length-1;i>0;i--){
             Directory remove = layers[i-1][(int)(Math.random()*layers[i-1].length)];
             remove.getParent().removeChild(remove);
+            layers = new Directory[][]{{}, {}, {}, {root}};
             generateLayers(depth-1,layers);
         }
         //adding image files
@@ -113,23 +116,23 @@ public class FilesGenerator {
         if(depth>1){
             generateLayers(depth-1,layers);
         }
-        return null;
     }
 
     private static File fileSelector(FileType fileType, Directory parent){
         File returnFile = null;
+        int index;
         switch(fileType){
-            case DIRECTORY -> {
-                int index = (int)(Math.random()* textNames.size());
+            case DIRECTORY:
+                index = (int)(Math.random()* textNames.size());
                 String name = textNames.get(index);
                 textNames.remove(index);
                 returnFile = new Directory(parent, name);
-            }
-            case TEXT -> {
-                int index = (int) (Math.random() * textNames.size());
-                String name = textNames.get(index) + ".txt";
-                textNames.remove(index);
+                break;
+            case TEXT:
                 index = (int) (Math.random() * textNames.size());
+                name = textNames.get(index) + ".txt";
+                textNames.remove(index);
+                index = (int) (Math.random() * textFiles.size());
                 String text = null;
                 try {
                     text = new String(Files.readAllBytes(textFiles.get(index).toPath()));
@@ -138,15 +141,16 @@ public class FilesGenerator {
                 }
                 textFiles.remove(index);
                 returnFile = new Text(parent, name, text);
-            }
-            case IMAGE -> {
-                int index = (int) (Math.random() * textNames.size());
+                break;
+            case IMAGE:
+                System.out.println(imageFiles.toString());
+                index = (int) (Math.random() * imageFiles.size());
                 java.io.File image = imageFiles.get(index);
                 String path = image.getPath();
-                String name = image.getName();
+                name = image.getName();
                 imageFiles.remove(index);
                 returnFile = new Image(parent,name,path);
-            }
+                break;
         }
         return returnFile;
     }

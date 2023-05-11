@@ -120,7 +120,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             final Mesh next = getFile(index - direction * 2).getType().getMesh();
             next.moveTo(new Coordinate(0, 8, renderRadius));
             next.rotateAbout(Coordinate.ORIGIN, 0, direction * Math.PI / 3, 0);
-            index += direction;
+            index -= direction;
             if (direction == -1) {
                 rendered.add(0, next);
                 renderedFiles.add(0, nextFile);
