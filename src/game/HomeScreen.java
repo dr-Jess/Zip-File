@@ -1,5 +1,7 @@
 package game;
 
+import backend.BackEngine;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -8,13 +10,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class HomeScreen extends JPanel implements MouseListener, MouseMotionListener {
+public class HomeScreen extends JPanel{
     private double titleY = 0.0;
+    BackEngine backEngine;
     BufferedImage title;
     BufferedImage shadow;
     BufferedImage click;
-    public HomeScreen(){
-        setSize(Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
+    private float endOpacity = 0;
+    public HomeScreen(BackEngine backEngine){
+        this.backEngine = backEngine;
+        this.setFocusable(true);
         try {
             title = ImageIO.read(new File(".\\assets\\title.png"));
             shadow = ImageIO.read(new File(".\\assets\\shadow.png"));
@@ -33,6 +38,37 @@ public class HomeScreen extends JPanel implements MouseListener, MouseMotionList
             }
         });
         t.start();
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                endFade();
+            }
+        });
+    }
+
+    private void endFade(){
+        final Timer frameTimer = new Timer(1000/60,null);
+        frameTimer.addActionListener(new ActionListener() {
+            double opacityRemaining = 1;
+            double lastTime = System.nanoTime();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double currentTime = System.nanoTime();
+                opacityRemaining-=(currentTime-lastTime)/500000000;
+                if(opacityRemaining<=-2){
+                    opacityRemaining = 0;
+                    endOpacity = 1;
+                    repaint();
+                    frameTimer.stop();
+                    backEngine.startGame();
+                }
+                endOpacity= (float) (1-opacityRemaining);
+                repaint();
+                lastTime = currentTime;
+            }
+        });
+        frameTimer.start();
     }
 
     @Override
@@ -52,40 +88,8 @@ public class HomeScreen extends JPanel implements MouseListener, MouseMotionList
         g.setColor(new Color(220,220,220));
 
         g.drawString("click anywhere to continue", cx-30,cy+15);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        repaint();
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));
+        g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
     }
 }
