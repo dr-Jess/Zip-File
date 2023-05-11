@@ -32,8 +32,8 @@ public enum FileType{
         @Override
         public Mesh getMesh() {
             return new MeshBuilder().readOBJ(
-                    ".\\assets\\folder (1).obj",
-                    ".\\assets\\folderpalette.png");
+                    ".\\assets\\zipfile.obj",
+                    ".\\assets\\zipfilepalette.png");
         }
     };
     public abstract Mesh getMesh();

@@ -28,9 +28,15 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     ArrayList<File> renderedFiles;
     ArrayList<Mesh> rendered;
     BufferedImage shadow;
+    BufferedImage up,down,left,right;
     private float endOpacity = 1F;
     boolean rotating = false;
     boolean reading = false;
+
+    boolean typing = false;
+    boolean tellUserToUseNumerals = false;
+    boolean incorrectGuess = false;
+    String userEntry = "";
     File readingFile = null;
 
     ArrayList<File> filePath = new ArrayList<>();
@@ -98,6 +104,10 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         this.setFocusable(true);
         try {
             shadow = ImageIO.read(new java.io.File(".\\assets\\gameback.png"));
+            up = ImageIO.read(new java.io.File(".\\assets\\up.png"));
+            down = ImageIO.read(new java.io.File(".\\assets\\down.png"));
+            left = ImageIO.read(new java.io.File(".\\assets\\left.png"));
+            right = ImageIO.read(new java.io.File(".\\assets\\right.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -234,7 +244,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        System.out.println(backEngine.getPassword());
         int sx = (Scene.SCREEN_WIDTH - shadow.getWidth())/2;
         int sy = (Scene.SCREEN_HEIGHT - shadow.getHeight())/2;
         g.drawImage(shadow,sx,sy,null);
@@ -265,6 +275,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         int y = 50;
         g.drawString(url,x,y);
         if(reading){
+
             if(readingFile.getType() == FileType.IMAGE){
                 Image i = (Image) readingFile;
                 try {
@@ -302,6 +313,22 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 }
             }else if(readingFile.getType() == FileType.ZIP) {
                 Zip z = (Zip) readingFile;
+                g.setFont(new Font("Courier New", Font.BOLD, 30));
+                g.setColor(new Color(30,30,30,240));
+                g.fillRect(300,100,Scene.SCREEN_WIDTH-600,Scene.SCREEN_HEIGHT-200);
+                g.setColor(Color.WHITE);
+                g.drawString("Start typing to enter the",350,150);
+                g.drawString("4-digit passcode",350,190);
+                g.drawString("Press [ENTER] to try passcode",350,230);
+                g.fillRect(350,300,Scene.SCREEN_WIDTH-700,100);
+                if(tellUserToUseNumerals){
+                    g.drawString("Only numeric values are accepted",350,270);
+                }
+                if(incorrectGuess){
+                    g.drawString("Incorrect! Try again.",350,270);
+                }
+                g.setColor(Color.BLACK);
+                g.drawString(userEntry, 370,360);
             }
         }
         Graphics2D g2d = (Graphics2D) g;
@@ -327,7 +354,6 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         if(!rotating) {
             rotating = true;
             final File nextFile = getFile(index - direction * 2);
-            System.out.println(index + " " + (index - direction * 2));
             final Mesh next = getFile(index - direction * 2).getType().getMesh();
             next.moveTo(new Coordinate(0, 8, renderRadius));
             next.rotateAbout(Coordinate.ORIGIN, 0, direction * Math.PI / 3, 0);
@@ -439,7 +465,6 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyCode() + " " + rotating + " " + reading);
         if(!rotating && !reading) {
             //Left
             if (e.getKeyCode() == 37) {
@@ -458,6 +483,31 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         if(e.getKeyCode() == 40){
             exitInteraction();
         }
+        if(typing){
+            if(48 <= e.getKeyCode() && e.getKeyCode() <= 57){
+                userEntry += e.getKeyChar();
+                tellUserToUseNumerals = false;
+                incorrectGuess = false;
+            }else if(e.getKeyCode() == 10){
+                if(userEntry.equals(backEngine.getPassword())) {
+                    backEngine.endGame();
+                }else{
+                    userEntry = "";
+                    tellUserToUseNumerals = false;
+                    incorrectGuess = true;
+                }
+            }else if(e.getKeyCode() == 8){
+                if(userEntry.length() > 0) {
+                    userEntry = userEntry.substring(0,userEntry.length()-1);
+                }
+            }
+            else{
+                incorrectGuess = false;
+                tellUserToUseNumerals = true;
+            }
+
+        }
+        repaint();
     }
 
     @Override
@@ -469,6 +519,10 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         File f = getFile(index);
         switch(f.getType()){
             case ZIP:
+                typing = true;
+                reading = true;
+                readingFile = f;
+                break;
             case TEXT:
             case IMAGE:
                 reading = true;
@@ -487,6 +541,10 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         File f = getFile(index);
         if(reading){
                 reading = false;
+                typing = false;
+                tellUserToUseNumerals = false;
+                incorrectGuess = false;
+                userEntry = "";
                 readingFile = f;
             }
             else if(currentDirectory != root){

@@ -44,7 +44,7 @@ public class MeshPolygon extends Polygon{
     public Color getColor(){
         Color c = super.getColor();
         double mod = 0.2;
-        double y = -mod* (normal.getDy() / normal.getMagnitude()) + 1;
+        double y = -mod* (normal.getDy()*normal.getDz() / normal.getMagnitude()) + 1;
         int red = Operator.limitNum((int) (c.getRed() * y),0,255);
         int green = Operator.limitNum((int) (c.getGreen() * y),0,255);
         int blue = Operator.limitNum((int) (c.getBlue() * y),0,255);
