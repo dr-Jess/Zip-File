@@ -283,7 +283,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                     int height = b.getHeight();
                     int targetHeight = 400;
                     double ratio = ((double) targetHeight) / ((double) height);
-                    b = resizeImage(b, (int) (height * ratio), (int) (b.getWidth() * ratio));
+                    b = resizeImage(b, (int) (b.getWidth() * ratio), (int) (height * ratio));
                     int bx = (Scene.SCREEN_WIDTH - b.getWidth())/2;
                     int by = (Scene.SCREEN_HEIGHT - b.getHeight())/2;
                     g.drawImage(b,bx,by, null);
@@ -330,10 +330,14 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 g.setColor(Color.BLACK);
                 g.drawString(userEntry, 370,360);
             }
+            int iconX = Scene.SCREEN_WIDTH/2-down.getWidth()/2 - metrics.stringWidth(" to close")/2;
+            g.drawImage(down,iconX,500,null);
+            g.drawString(" to close", Scene.SCREEN_WIDTH/2 - metrics.stringWidth(" to close")/2, 530);
         }
         Graphics2D g2d = (Graphics2D) g;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,clamp(endOpacity, 0, 1)));
         g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
+
     }
 
     private float clamp(float val, float min, float max) {
