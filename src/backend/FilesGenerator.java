@@ -41,7 +41,7 @@ public class FilesGenerator {
             }
         }
         //adding zip file and readme
-        root.addChild(new Text(root, "README.txt", "You've been trapped in this file explorer! Find digits  of the passcode hidden in   text files to extract the   ZIP file and escape! "));
+        root.addChild(new Text(root, "README.txt", "You've been trapped in this file explorer! Find digits  of the passcode hidden in   text files to extract the   ZIP file and escape!                                    Be careful or you might end up running in circles!"));
         Zip zipFile = new Zip(root,"Unlock me!.zip");
         root.addChild(zipFile);
         //adding solution text files
