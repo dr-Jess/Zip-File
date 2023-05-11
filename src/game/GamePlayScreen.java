@@ -1,5 +1,6 @@
 package game;
 
+import files.Image;
 import render3D.Coordinate;
 import render3D.Mesh;
 import render3D.MeshBuilder;
@@ -20,14 +21,20 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     Mesh[] meshes;
     int index = 0;
     String rootURL = ":\\";
-    String URL;
+    String URL = ":\\";
     int renderRadius = 50;
     double t = 0;
     ArrayList<File> renderedFiles;
     ArrayList<Mesh> rendered;
     BufferedImage shadow;
     boolean rotating = false;
+    boolean reading = false;
+    File readingFile = null;
 
+    ArrayList<File> filePath = new ArrayList<>();
+    Directory root;
+
+    Directory currentDirectory;
 
     public enum GameAction{
         GO_BACK,
@@ -50,12 +57,12 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             meshes[i] = files[i].getType().getMesh();
             meshes[i].moveTo(meshes[i].getCenter().translatedBy(0,0,30));
         }
-        index = meshes.length/2-1;
-        renderedFiles = new ArrayList<File>(Arrays.asList(getFile(index-1),getFile(index),getFile(index+1)));
-        rendered = new ArrayList<>(Arrays.asList(renderedFiles.get(0).getType().getMesh(),
+        index = meshes.length/2+1;
+        renderedFiles = new ArrayList<>(Arrays.asList(getFile(index+1),getFile(index),getFile(index-1)));
+        rendered = new ArrayList<>(Arrays.asList(
+                renderedFiles.get(0).getType().getMesh(),
                 renderedFiles.get(1).getType().getMesh(),
                 renderedFiles.get(2).getType().getMesh()));
-        System.out.println(index);;
         for(Mesh m: rendered){
             m.moveTo(new Coordinate(0,8,renderRadius));
         }
@@ -81,6 +88,64 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         });
         //t2.start();
         this.addKeyListener(this);
+    }
+
+    public GamePlayScreen(Directory directory){
+        try {
+            shadow = ImageIO.read(new java.io.File(".\\assets\\gameback.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        this.root = directory;
+        this.currentDirectory = directory;
+        this.files = directory.getChildren();
+
+        {
+            this.setSize(Scene.SCREEN_WIDTH, Scene.SCREEN_HEIGHT);
+
+            meshes = new Mesh[files.length];
+
+            for (int i = 0; i < files.length; i++) {
+                meshes[i] = files[i].getType().getMesh();
+                meshes[i].moveTo(meshes[i].getCenter().translatedBy(0, 0, 30));
+            }
+
+            index = meshes.length / 2 + 1;
+            renderedFiles = new ArrayList<>(Arrays.asList(getFile(index + 1), getFile(index), getFile(index - 1)));
+            rendered = new ArrayList<>(Arrays.asList(
+                    renderedFiles.get(0).getType().getMesh(),
+                    renderedFiles.get(1).getType().getMesh(),
+                    renderedFiles.get(2).getType().getMesh()));
+
+            for (Mesh m : rendered) {
+                m.moveTo(new Coordinate(0, 8, renderRadius));
+            }
+
+            rendered.get(0).rotateAbout(Coordinate.ORIGIN, 0, -Math.PI / 6, 0);
+            rendered.get(1).rotateAbout(Coordinate.ORIGIN, 0, 0, 0);
+            rendered.get(2).rotateAbout(Coordinate.ORIGIN, 0, Math.PI / 6, 0);
+            Timer t = new Timer(3000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    rotate(-1);
+                }
+            });
+
+            //t.start();
+
+            Timer t2 = new Timer(20, new ActionListener() {
+                double t = 0.05;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    rendered.get(1).moveTo(rendered.get(1).getCenter().translatedBy(0, 0.05 * Math.sin(t), 0));
+                    t += 0.05;
+                    repaint();
+                }
+            });
+        }
+        //t2.start();
     }
 
     public void setFiles(File[] files){
@@ -109,6 +174,14 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             int y = 200-(int) (0.1*Math.abs(rendered.get(i).getyRotation())*Scene.SCREEN_WIDTH/2);
             g.drawString(name,x,y);
         }
+        FontMetrics metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
+        int width = metrics.stringWidth(URL);
+        int x = Scene.SCREEN_WIDTH/2 - width/2;
+        int y = 50;
+        g.drawString(URL,x,y);
+        if(reading){
+
+        }
 
     }
 
@@ -116,11 +189,11 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         if(!rotating) {
             rotating = true;
             final File nextFile = getFile(index - direction * 2);
-            System.out.println(getFile(index - direction * 2) + " " + (index - direction * 2));
+            System.out.println(index + " " + (index - direction * 2));
             final Mesh next = getFile(index - direction * 2).getType().getMesh();
             next.moveTo(new Coordinate(0, 8, renderRadius));
             next.rotateAbout(Coordinate.ORIGIN, 0, direction * Math.PI / 3, 0);
-            index += direction;
+            index -= direction;
             if (direction == -1) {
                 rendered.add(0, next);
                 renderedFiles.add(0, nextFile);
@@ -160,18 +233,18 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     }
 
     public Mesh getMesh(int N){
-        int index = N%meshes.length;
-        while(index < 0){
-            index+=meshes.length;
+        while(N < 0){
+            N+=meshes.length;
         }
+        int index = N%meshes.length;
         return meshes[index];
     }
 
     public File getFile(int N){
-        int index = N%files.length;
-        while(index < 0){
-            index+=files.length;
+        while(N < 0){
+            N+=files.length;
         }
+        int index = N%files.length;
         return files[index];
     }
 
@@ -229,12 +302,22 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     @Override
     public void keyPressed(KeyEvent e) {
         System.out.println(e.getKeyCode());;
-        if(!rotating) {
+        if(!rotating && !reading) {
+            //Left
             if (e.getKeyCode() == 37) {
                 rotate(1);
             }
+            //Right
             else if (e.getKeyCode() == 39) {
                 rotate(-1);
+            }
+            //Up
+            else if(e.getKeyCode() == 38){
+                interactWithFile();
+            }
+            //Down
+            else if(e.getKeyCode() == 40){
+                exitInteraction();
             }
         }
     }
@@ -242,5 +325,38 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    private void interactWithFile(){
+        File f = getFile(index);
+        switch(f.getType()){
+            case ZIP:
+            case TEXT:
+            case IMAGE:
+                reading = true;
+                readingFile = f;
+                break;
+            case DIRECTORY:
+                this.currentDirectory = (Directory) f;
+                files = ((Directory)f ).getChildren();
+                break;
+        }
+        repaint();
+    }
+
+    private void exitInteraction(){
+        File f = getFile(index);
+        switch(f.getType()){
+            case ZIP:
+            case TEXT:
+            case IMAGE:
+                reading = false;
+                readingFile = f;
+                break;
+            default:
+                this.currentDirectory = ((Directory) f).getParent();
+                files = currentDirectory.getChildren();
+        }
+        repaint();
     }
 }
