@@ -50,7 +50,7 @@ public class FilesGenerator {
         }
         int[] solutionIndices = new int[4];
         for (int i=0;i<4;i++){
-            while(solutionIndices[i]!=0){
+            while(solutionIndices[i]==0){
                 int random = (int)(Math.random()*directoriesCount)+1;
                 boolean repeat = false;
                 for (int j=0;j<i;j++){
@@ -72,7 +72,7 @@ public class FilesGenerator {
                         int index = (int) (Math.random() * textNames.size());
                         String name = textNames.get(index) + ".txt";
                         textNames.remove(index);
-                        layers[i][j].addChild(new Text(layers[i][j],name, "Character"+(pinIndex+1)+"of solution: "+(zipFile.getPassword().charAt(pinIndex)+"")));
+                        layers[i][j].addChild(new Text(layers[i][j],name, "Character "+(pinIndex+1)+" of solution: "+(zipFile.getPassword().charAt(pinIndex)+"")));
                         pinIndex++;
                     }
                 }

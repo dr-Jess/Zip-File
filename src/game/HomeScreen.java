@@ -16,6 +16,7 @@ public class HomeScreen extends JPanel{
     BufferedImage title;
     BufferedImage shadow;
     BufferedImage click;
+    boolean fading = false;
     private float endOpacity = 0;
     public HomeScreen(BackEngine backEngine){
         this.backEngine = backEngine;
@@ -42,7 +43,10 @@ public class HomeScreen extends JPanel{
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                endFade();
+                if(!fading){
+                    fading = true;
+                    endFade();
+                }
             }
         });
     }
