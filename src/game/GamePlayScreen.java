@@ -282,7 +282,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         int x = Scene.SCREEN_WIDTH/2 - width/2;
         int y = 50;
         g.drawString(url,x,y);
-        g.drawString(stopwatch, Scene.SCREEN_WIDTH/2 - metrics.stringWidth(stopwatch)/2,650);
+        g.drawString(stopwatch, (Scene.SCREEN_WIDTH - metrics.stringWidth(stopwatch))-20,50);
         if(reading){
 
             if(readingFile.getType() == FileType.IMAGE){
