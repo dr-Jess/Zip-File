@@ -23,6 +23,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     int index = 0;
     String rootURL = ":\\";
     String URL = ":\\";
+    String stopwatch = "";
     int renderRadius = 50;
     double t = 0;
     ArrayList<File> renderedFiles;
@@ -99,7 +100,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         this.addKeyListener(this);
     }
 
-    public GamePlayScreen(Directory directory, BackEngine backEngine){
+    public GamePlayScreen(Directory directory, final BackEngine backEngine){
         this.backEngine = backEngine;
         this.setFocusable(true);
         try {
@@ -115,45 +116,58 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         this.root = directory;
         this.currentDirectory = directory;
         this.files = directory.getChildren();
-
-        {
-            this.setSize(Scene.SCREEN_WIDTH, Scene.SCREEN_HEIGHT);
-
-            meshes = new Mesh[files.length];
-
-            for (int i = 0; i < files.length; i++) {
-                meshes[i] = files[i].getType().getMesh();
-                meshes[i].moveTo(meshes[i].getCenter().translatedBy(0, 0, 30));
-            }
-
-            index = meshes.length / 2 + 1;
-
-            renderedFiles = new ArrayList<>(Arrays.asList(getFile(index + 1), getFile(index), getFile(index - 1)));
-            rendered = new ArrayList<>(Arrays.asList(
-                    renderedFiles.get(0).getType().getMesh(),
-                    renderedFiles.get(1).getType().getMesh(),
-                    renderedFiles.get(2).getType().getMesh()));
-
-            for (Mesh m : rendered) {
-                m.moveTo(new Coordinate(0, 8, renderRadius));
-            }
-
-            rendered.get(0).rotateAbout(Coordinate.ORIGIN, 0, -Math.PI / 6, 0);
-            rendered.get(1).rotateAbout(Coordinate.ORIGIN, 0, 0, 0);
-            rendered.get(2).rotateAbout(Coordinate.ORIGIN, 0, Math.PI / 6, 0);
-
-            Timer t2 = new Timer(20, new ActionListener() {
-                double t = 0.05;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    rendered.get(1).moveTo(rendered.get(1).getCenter().translatedBy(0, 0.05 * Math.sin(t), 0));
-                    t += 0.05;
-                    repaint();
-                }
-            });
-
+        this.setSize(Scene.SCREEN_WIDTH, Scene.SCREEN_HEIGHT);
+        meshes = new Mesh[files.length];
+        for (int i = 0; i < files.length; i++) {
+            meshes[i] = files[i].getType().getMesh();
+            meshes[i].moveTo(meshes[i].getCenter().translatedBy(0, 0, 30));
         }
+        index = meshes.length / 2 + 1;
+        renderedFiles = new ArrayList<>(Arrays.asList(getFile(index + 1), getFile(index), getFile(index - 1)));
+        rendered = new ArrayList<>(Arrays.asList(
+                renderedFiles.get(0).getType().getMesh(),
+                renderedFiles.get(1).getType().getMesh(),
+                renderedFiles.get(2).getType().getMesh()));
+        for (Mesh m : rendered) {
+            m.moveTo(new Coordinate(0, 8, renderRadius));
+        }
+        rendered.get(0).rotateAbout(Coordinate.ORIGIN, 0, -Math.PI / 6, 0);
+        rendered.get(1).rotateAbout(Coordinate.ORIGIN, 0, 0, 0);
+        rendered.get(2).rotateAbout(Coordinate.ORIGIN, 0, Math.PI / 6, 0);
+
+        Timer t2 = new Timer(20, new ActionListener() {
+            double t = 0.05;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rendered.get(1).moveTo(rendered.get(1).getCenter().translatedBy(0, 0.05 * Math.sin(t), 0));
+                t += 0.05;
+                repaint();
+            }
+        });
+
+        Timer watch = new Timer(10, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                float time = backEngine.getTime();
+                int minutes = (int) (time/60000);
+                int seconds = (int)((time%60000)/1000);
+                int millis = (int) (((time%60000)%1000));
+                String minuteS = minutes + ":";
+                String secondS = seconds + ":";
+                if (seconds<10){
+                    secondS = "0" + secondS;
+                }
+                String milliS = millis + "";
+                if (millis<10){
+                    milliS = "00" + millis;
+                } else if (millis<100) {
+                    milliS = "0" + millis;
+                }
+                stopwatch = minuteS + secondS + milliS;
+                repaint();
+            }
+        });
+        watch.start();
         this.addKeyListener(this);
         //t2.start();
         startFade();
@@ -185,7 +199,6 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         });
         frameTimer.start();
     }
-
     private void endFade(){
         final Timer frameTimer = new Timer(1000/60,null);
         frameTimer.addActionListener(new ActionListener() {
@@ -269,6 +282,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         int x = Scene.SCREEN_WIDTH/2 - width/2;
         int y = 50;
         g.drawString(url,x,y);
+        g.drawString(stopwatch, Scene.SCREEN_WIDTH/2 - metrics.stringWidth(stopwatch)/2,650);
         if(reading){
 
             if(readingFile.getType() == FileType.IMAGE){
