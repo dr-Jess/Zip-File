@@ -1,5 +1,6 @@
 package game;
 
+import backend.FilesGenerator;
 import files.Directory;
 import files.File;
 import files.Image;
@@ -12,17 +13,10 @@ public class TestFrame extends JFrame {
         HomeScreen h = new HomeScreen();
         TestPanel p = new TestPanel();
         TestFrame f = new TestFrame();
-        Directory d = new Directory("root");
-        Directory d1 = new Directory(d,"d1");
-        Directory d2= new Directory(d1,"d2");
-        d.addChild(d1);
-        d1.addChild(d2);
-        GamePlayScreen g = new GamePlayScreen(new File[]{
-                d,
-                new Image(d,"image",""),
-                new Image(d,"image4",""),
-                new Text(d, "text","")
-        });
+        Directory d = new Directory("folder");
+        Directory root = new Directory("~");
+        FilesGenerator.generate(4,2,1,root);
+        GamePlayScreen g = new GamePlayScreen(root.getChildren());
         f.addKeyListener(g);
         f.add(g);
         f.setSize(Scene.SCREEN_WIDTH, Scene.SCREEN_HEIGHT);
