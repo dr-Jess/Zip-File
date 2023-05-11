@@ -10,7 +10,7 @@ import javax.swing.*;
 
 public class TestFrame extends JFrame {
     public static void main(String[] args) {
-        HomeScreen h = new HomeScreen();
+        //HomeScreen h = new HomeScreen();
         TestPanel p = new TestPanel();
         TestFrame f = new TestFrame();
         Directory d = new Directory("folder");
