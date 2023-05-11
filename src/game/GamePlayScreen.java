@@ -276,7 +276,24 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             }else if(readingFile.getType() == FileType.TEXT) {
                 Text t = (Text) readingFile;
                 String text = t.getText();
-                g.drawRect(300,100,Scene.SCREEN_WIDTH-600,Scene.SCREEN_HEIGHT-200);
+                g.setColor(new Color(30,30,30,240));
+                g.fillRect(300,100,Scene.SCREEN_WIDTH-600,Scene.SCREEN_HEIGHT-200);
+                g.setColor(Color.WHITE);
+                metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
+                String temp = "";
+                int drawHeight = 150;
+                for(char c: text.toCharArray()){
+                    if(metrics.stringWidth(temp) > 500){
+                        g.drawString(temp, 350,drawHeight);
+                        drawHeight += 40;
+                        temp = "" + c;
+                    }else{
+                        temp+=c;
+                    }
+                }
+                if(!temp.equals("")){
+                    g.drawString(temp, 350,drawHeight);
+                }
             }else if(readingFile.getType() == FileType.ZIP) {
                 Zip z = (Zip) readingFile;
             }
