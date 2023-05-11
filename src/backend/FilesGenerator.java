@@ -40,9 +40,10 @@ public class FilesGenerator {
                 layers[i][(startingIndex+(3*j))%layers[i].length].addChild((Image) fileSelector(FileType.IMAGE,layers[i][(startingIndex+(3*j))%layers[i].length]));
             }
         }
-        //adding zip file
+        //adding zip file and readme
         Zip zipFile = new Zip(root,"Unlock me!.zip");
         root.addChild(zipFile);
+        root.addChild(new Text(root, "README.txt", "text"));
         //adding solution text files
         int directoriesCount = -1;
         for(Directory[] layer: layers){

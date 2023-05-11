@@ -177,11 +177,6 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                     opacityRemaining = 0;
                     endOpacity = 0;
                     repaint();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
                 endOpacity= (float) (opacityRemaining);
                 repaint();
@@ -335,6 +330,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             g.drawString(" to close", Scene.SCREEN_WIDTH/2 - metrics.stringWidth(" to close")/2, 530);
         }
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.white);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,clamp(endOpacity, 0, 1)));
         g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
 
@@ -494,7 +490,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 incorrectGuess = false;
             }else if(e.getKeyCode() == 10){
                 if(userEntry.equals(backEngine.getPassword())) {
-                    backEngine.endGame();
+                    endFade();
                 }else{
                     userEntry = "";
                     tellUserToUseNumerals = false;

@@ -56,11 +56,6 @@ public class EndGameScreen extends JPanel{
                     opacityRemaining = 0;
                     endOpacity = 0;
                     repaint();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
                 endOpacity= (float) (opacityRemaining);
                 repaint();
@@ -85,7 +80,9 @@ public class EndGameScreen extends JPanel{
         int cy = (Scene.SCREEN_HEIGHT - click.getHeight())/2+240;
         g.drawImage(click,cx,cy-(int)(8*titleY),null);
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.white);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));
         g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
     }
+
 }
