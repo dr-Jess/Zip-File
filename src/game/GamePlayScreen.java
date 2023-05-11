@@ -27,6 +27,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     ArrayList<File> renderedFiles;
     ArrayList<Mesh> rendered;
     BufferedImage shadow;
+    private float endOpacity = 1F;
     boolean rotating = false;
     boolean reading = false;
     File readingFile = null;
@@ -91,6 +92,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     }
 
     public GamePlayScreen(Directory directory){
+        this.setFocusable(true);
         try {
             shadow = ImageIO.read(new java.io.File(".\\assets\\gameback.png"));
         } catch (IOException e) {
@@ -146,10 +148,39 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             });
         }
         //t2.start();
+        startFade();
     }
 
     public void setFiles(File[] files){
         this.files = files;
+    }
+
+    private void startFade(){
+        final Timer frameTimer = new Timer(1000/60,null);
+        frameTimer.addActionListener(new ActionListener() {
+            double opacityRemaining = 1;
+            double lastTime = System.nanoTime();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double currentTime = System.nanoTime();
+                opacityRemaining-=(currentTime-lastTime)/500000000;
+                if(opacityRemaining<=0){
+                    frameTimer.stop();
+                    opacityRemaining = 0;
+                    endOpacity = 0;
+                    repaint();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                endOpacity= (float) (opacityRemaining);
+                repaint();
+                lastTime = currentTime;
+            }
+        });
+        frameTimer.start();
     }
 
     @Override
@@ -182,6 +213,9 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         if(reading){
 
         }
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));
+        g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
 
     }
 

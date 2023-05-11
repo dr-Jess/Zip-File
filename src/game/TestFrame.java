@@ -9,7 +9,7 @@ import files.Text;
 import javax.swing.*;
 
 public class TestFrame extends JFrame {
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         HomeScreen h = new HomeScreen();
         TestPanel p = new TestPanel();
         TestFrame f = new TestFrame();
@@ -24,5 +24,7 @@ public class TestFrame extends JFrame {
         f.setVisible(true);
         p.animate();
     }
+
+     */
 
 }
