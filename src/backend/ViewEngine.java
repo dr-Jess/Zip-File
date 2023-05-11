@@ -12,7 +12,7 @@ public class ViewEngine {
     public ViewEngine(BackEngine backEngine){
         this.backEngine = backEngine;
         frame = new JFrame("Zip-File");
-        homeScreen = new HomeScreen();
+        homeScreen = new HomeScreen(backEngine);
         frame.setContentPane(homeScreen);
         frame.setPreferredSize(new Dimension(Scene.SCREEN_WIDTH, Scene.SCREEN_HEIGHT));
         frame.setLayout(null);
@@ -23,7 +23,10 @@ public class ViewEngine {
     }
 
     public void startGame(){
-        gamePlayScreen = new GamePlayScreen();
+        gamePlayScreen = new GamePlayScreen(backEngine.getRoot());
+        frame.setContentPane(gamePlayScreen);
+        gamePlayScreen.requestFocus();
+        frame.pack();
     }
 
 }

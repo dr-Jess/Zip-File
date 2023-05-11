@@ -9,8 +9,8 @@ import files.Text;
 import javax.swing.*;
 
 public class TestFrame extends JFrame {
-    public static void main(String[] args) {
-        //HomeScreen h = new HomeScreen();
+    /*public static void main(String[] args) {
+        HomeScreen h = new HomeScreen();
         TestPanel p = new TestPanel();
         TestFrame f = new TestFrame();
         Directory d = new Directory("folder");
@@ -24,5 +24,7 @@ public class TestFrame extends JFrame {
         f.setVisible(true);
         p.animate();
     }
+
+     */
 
 }

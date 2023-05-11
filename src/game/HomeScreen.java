@@ -89,7 +89,13 @@ public class HomeScreen extends JPanel{
 
         g.drawString("click anywhere to continue", cx-30,cy+15);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,clamp(endOpacity, 0, 1)));
         g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
+    }
+
+    private float clamp(float val, float min, float max) {
+        if(val < min) return min;
+        else if(val > max) return max;
+        else return val;
     }
 }
