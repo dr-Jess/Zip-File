@@ -114,6 +114,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             }
 
             index = meshes.length / 2 + 1;
+
             renderedFiles = new ArrayList<>(Arrays.asList(getFile(index + 1), getFile(index), getFile(index - 1)));
             rendered = new ArrayList<>(Arrays.asList(
                     renderedFiles.get(0).getType().getMesh(),
@@ -127,14 +128,6 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             rendered.get(0).rotateAbout(Coordinate.ORIGIN, 0, -Math.PI / 6, 0);
             rendered.get(1).rotateAbout(Coordinate.ORIGIN, 0, 0, 0);
             rendered.get(2).rotateAbout(Coordinate.ORIGIN, 0, Math.PI / 6, 0);
-            Timer t = new Timer(3000, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    rotate(-1);
-                }
-            });
-
-            //t.start();
 
             Timer t2 = new Timer(20, new ActionListener() {
                 double t = 0.05;
@@ -182,6 +175,31 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         });
         frameTimer.start();
     }
+    public void resetRendered(){
+
+        meshes = new Mesh[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            meshes[i] = files[i].getType().getMesh();
+            meshes[i].moveTo(meshes[i].getCenter().translatedBy(0, 0, 30));
+        }
+
+        index = meshes.length / 2 + 1;
+
+        renderedFiles = new ArrayList<>(Arrays.asList(getFile(index + 1), getFile(index), getFile(index - 1)));
+        rendered = new ArrayList<>(Arrays.asList(
+                renderedFiles.get(0).getType().getMesh(),
+                renderedFiles.get(1).getType().getMesh(),
+                renderedFiles.get(2).getType().getMesh()));
+
+        for (Mesh m : rendered) {
+            m.moveTo(new Coordinate(0, 8, renderRadius));
+        }
+
+        rendered.get(0).rotateAbout(Coordinate.ORIGIN, 0, -Math.PI / 6, 0);
+        rendered.get(1).rotateAbout(Coordinate.ORIGIN, 0, 0, 0);
+        rendered.get(2).rotateAbout(Coordinate.ORIGIN, 0, Math.PI / 6, 0);
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -211,12 +229,39 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         int y = 50;
         g.drawString(URL,x,y);
         if(reading){
-
+            if(readingFile.getType() == FileType.IMAGE){
+                Image i = (Image) readingFile;
+                try {
+                    BufferedImage b = ImageIO.read(new java.io.File(i.getImagePath()));
+                    int height = b.getHeight();
+                    int targetHeight = 400;
+                    double ratio = ((double) targetHeight) / ((double) height);
+                    b = resizeImage(b, (int) (height * ratio), (int) (b.getWidth() * ratio));
+                    int bx = (Scene.SCREEN_WIDTH - b.getWidth())/2;
+                    int by = (Scene.SCREEN_HEIGHT - b.getHeight())/2;
+                    g.drawImage(b,bx,by, null);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }else if(readingFile.getType() == FileType.TEXT) {
+                Text t = (Text) readingFile;
+                String text = t.getText();
+                g.drawRect(300,100,Scene.SCREEN_WIDTH-600,Scene.SCREEN_HEIGHT-200);
+            }else if(readingFile.getType() == FileType.ZIP) {
+                Zip z = (Zip) readingFile;
+            }
         }
         Graphics2D g2d = (Graphics2D) g;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));
         g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
+    }
 
+    BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+        return resizedImage;
     }
 
     private void rotate(final int direction){
@@ -335,7 +380,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyCode());;
+        System.out.println(e.getKeyCode() + " " + rotating + " " + reading);
         if(!rotating && !reading) {
             //Left
             if (e.getKeyCode() == 37) {
@@ -349,10 +394,10 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             else if(e.getKeyCode() == 38){
                 interactWithFile();
             }
-            //Down
-            else if(e.getKeyCode() == 40){
-                exitInteraction();
-            }
+        }
+        //Down
+        if(e.getKeyCode() == 40){
+            exitInteraction();
         }
     }
 
@@ -373,6 +418,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             case DIRECTORY:
                 this.currentDirectory = (Directory) f;
                 files = ((Directory)f ).getChildren();
+                resetRendered();
                 break;
         }
         repaint();
@@ -380,16 +426,14 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
 
     private void exitInteraction(){
         File f = getFile(index);
-        switch(f.getType()){
-            case ZIP:
-            case TEXT:
-            case IMAGE:
+        if(reading){
                 reading = false;
                 readingFile = f;
-                break;
-            default:
-                this.currentDirectory = ((Directory) f).getParent();
+            }
+            else if(currentDirectory != root){
+                this.currentDirectory = currentDirectory.getParent();
                 files = currentDirectory.getChildren();
+                resetRendered();
         }
         repaint();
     }
