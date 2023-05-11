@@ -41,9 +41,9 @@ public class FilesGenerator {
             }
         }
         //adding zip file and readme
+        root.addChild(new Text(root, "README.txt", "You've been trapped in this file explorer! Find digits  of the passcode hidden in   text files to extract the   ZIP file and escape! "));
         Zip zipFile = new Zip(root,"Unlock me!.zip");
         root.addChild(zipFile);
-        root.addChild(new Text(root, "README.txt", "text"));
         //adding solution text files
         int directoriesCount = -1;
         for(Directory[] layer: layers){
