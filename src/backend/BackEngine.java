@@ -19,7 +19,6 @@ public class BackEngine {
         password = FilesGenerator.generate(4,2,1,root);
         startTime = System.currentTimeMillis();
         viewEngine.startGame();
-        System.out.println(password);
     }
 
     public long getTime(){
