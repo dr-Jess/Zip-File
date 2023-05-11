@@ -25,7 +25,7 @@ public abstract class File {
     /**
      * @return FileType enum of the file type
      */
-    abstract FileType getType();
+    public abstract FileType getType();
 
     /**
      * @return in-game path of file
