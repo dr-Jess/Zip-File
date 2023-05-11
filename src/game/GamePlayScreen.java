@@ -254,10 +254,16 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             g.drawString(name,x,y);
         }
         FontMetrics metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
-        int width = metrics.stringWidth(URL);
+        Directory[] path = currentDirectory.getPath();
+        String url = ":\\";
+        for(Directory d: path){
+            url += d.getName()+"\\";
+        }
+        url+= currentDirectory.getName();
+        int width = metrics.stringWidth(url);
         int x = Scene.SCREEN_WIDTH/2 - width/2;
         int y = 50;
-        g.drawString(URL,x,y);
+        g.drawString(url,x,y);
         if(reading){
             if(readingFile.getType() == FileType.IMAGE){
                 Image i = (Image) readingFile;
