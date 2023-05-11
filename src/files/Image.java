@@ -3,7 +3,7 @@ package files;
 public class Image extends File{
     private String imagePath;
     @Override
-    FileType getType() {
+    public FileType getType() {
         return FileType.IMAGE;
     }
 

@@ -3,7 +3,7 @@ package files;
 public class Text extends File{
     private String text = "";
     @Override
-    FileType getType() {
+    public FileType getType() {
         return FileType.TEXT;
     }
 

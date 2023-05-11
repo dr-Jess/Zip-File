@@ -2,7 +2,7 @@ package files;
 
 public class Directory extends File{
     @Override
-    FileType getType() {
+    public FileType getType() {
         return FileType.DIRECTORY;
     }
     private File[] children = {};

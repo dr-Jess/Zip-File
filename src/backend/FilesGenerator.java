@@ -45,5 +45,6 @@ public class FilesGenerator {
             case DIRECTORY:
                 break;
         }
+        return null;
     }
 }
