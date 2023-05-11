@@ -14,7 +14,7 @@ public class EndGameScreen extends JPanel{
     private double titleY = 0.0;
     BufferedImage title;
     BufferedImage shadow;
-    BufferedImage click;
+    String stopWatch;
     BackEngine backEngine;
     float endOpacity = 1F;
     long time;
@@ -25,10 +25,25 @@ public class EndGameScreen extends JPanel{
         try {
             title = ImageIO.read(new File(".\\assets\\win.png"));
             shadow = ImageIO.read(new File(".\\assets\\shadow.png"));
-            click = ImageIO.read(new File(".\\assets\\click.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.time = backEngine.getTime();
+        int minutes = (int) (time/60000);
+        int seconds = (int)((time%60000)/1000);
+        int millis = (int) (((time%60000)%1000));
+        String minuteS = minutes + ":";
+        String secondS = seconds + ":";
+        if (seconds<10){
+            secondS = "0" + secondS;
+        }
+        String milliS = millis + "";
+        if (millis<10){
+            milliS = "00" + millis;
+        } else if (millis<100) {
+            milliS = "0" + millis;
+        }
+        stopWatch = "Your time: " + minuteS + secondS + milliS;
         startFade();
         Timer t = new Timer(1,new ActionListener(){
             double t = 0;
@@ -76,9 +91,12 @@ public class EndGameScreen extends JPanel{
         int tx = (Scene.SCREEN_WIDTH - title.getWidth())/2;
         int ty = (Scene.SCREEN_HEIGHT - title.getHeight())/2-80;
         g.drawImage(title,tx,ty+(int)(20*titleY),null);
-        int cx = (Scene.SCREEN_WIDTH - click.getWidth())/2;
-        int cy = (Scene.SCREEN_HEIGHT - click.getHeight())/2+240;
-        g.drawImage(click,cx,cy-(int)(8*titleY),null);
+        g.setFont(new Font("Courier New", Font.BOLD, 30));
+        g.setColor(Color.white);
+        FontMetrics metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
+        int cx = (Scene.SCREEN_WIDTH - metrics.stringWidth(stopWatch))/2;
+        int cy = (Scene.SCREEN_HEIGHT - metrics.getHeight())/2+270;
+        g.drawString(stopWatch,cx,cy-(int)(4*titleY));
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.white);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));

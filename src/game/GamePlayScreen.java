@@ -148,7 +148,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         Timer watch = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                float time = backEngine.getTime();
+                long time = backEngine.getTime();
                 int minutes = (int) (time/60000);
                 int seconds = (int)((time%60000)/1000);
                 int millis = (int) (((time%60000)%1000));
@@ -252,7 +252,6 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        System.out.println(backEngine.getPassword());
         int sx = (Scene.SCREEN_WIDTH - shadow.getWidth())/2;
         int sy = (Scene.SCREEN_HEIGHT - shadow.getHeight())/2;
         g.drawImage(shadow,sx,sy,null);
