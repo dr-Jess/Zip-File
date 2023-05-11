@@ -89,7 +89,7 @@ public class EndGameScreen extends JPanel{
         int sy = (Scene.SCREEN_HEIGHT - shadow.getHeight())/2-20;
         g.drawImage(shadow,sx,sy,null);
         int tx = (Scene.SCREEN_WIDTH - title.getWidth())/2;
-        int ty = (Scene.SCREEN_HEIGHT - title.getHeight())/2-80;
+        int ty = (Scene.SCREEN_HEIGHT - title.getHeight())/2-50;
         g.drawImage(title,tx,ty+(int)(20*titleY),null);
         g.setFont(new Font("Courier New", Font.BOLD, 30));
         g.setColor(Color.white);
