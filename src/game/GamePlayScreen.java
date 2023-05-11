@@ -35,6 +35,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
 
     ArrayList<File> filePath = new ArrayList<>();
     Directory root;
+    BackEngine backEngine;
 
     Directory currentDirectory;
 
@@ -93,6 +94,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
     }
 
     public GamePlayScreen(Directory directory, BackEngine backEngine){
+        this.backEngine = backEngine
         this.setFocusable(true);
         try {
             shadow = ImageIO.read(new java.io.File(".\\assets\\gameback.png"));
@@ -178,6 +180,31 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
         });
         frameTimer.start();
     }
+
+    private void endFade(){
+        final Timer frameTimer = new Timer(1000/60,null);
+        frameTimer.addActionListener(new ActionListener() {
+            double opacityRemaining = 1;
+            double lastTime = System.nanoTime();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double currentTime = System.nanoTime();
+                opacityRemaining-=(currentTime-lastTime)/500000000;
+                if(opacityRemaining<=-2){
+                    opacityRemaining = 0;
+                    endOpacity = 1;
+                    repaint();
+                    frameTimer.stop();
+                    backEngine.endGame();
+                }
+                endOpacity= (float) (1-opacityRemaining);
+                repaint();
+                lastTime = currentTime;
+            }
+        });
+        frameTimer.start();
+    }
+
     public void resetRendered(){
 
         meshes = new Mesh[files.length];
@@ -255,8 +282,14 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
             }
         }
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,endOpacity));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,clamp(endOpacity, 0, 1)));
         g2d.fillRect(0,0,Scene.SCREEN_WIDTH,Scene.SCREEN_HEIGHT);
+    }
+
+    private float clamp(float val, float min, float max) {
+        if(val < min) return min;
+        else if(val > max) return max;
+        else return val;
     }
 
     BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
