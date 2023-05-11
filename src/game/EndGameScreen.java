@@ -23,7 +23,7 @@ public class EndGameScreen extends JPanel{
         this.setFocusable(true);
         this.time = time;
         try {
-            title = ImageIO.read(new File(".\\assets\\title.png"));
+            title = ImageIO.read(new File(".\\assets\\win.png"));
             shadow = ImageIO.read(new File(".\\assets\\shadow.png"));
             click = ImageIO.read(new File(".\\assets\\click.png"));
         } catch (IOException e) {
