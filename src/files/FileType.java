@@ -1,29 +1,40 @@
 package files;
 
-public enum FileType {
-    DIRECTORY{
-        public String get3DPath(){
-            return "";
-        }
-    },
+import render3D.Mesh;
+import render3D.MeshBuilder;
+
+public enum FileType{
     TEXT{
-        public String get3DPath(){
-            return "";
+        @Override
+        public Mesh getMesh() {
+            return new MeshBuilder().readOBJ(
+                    ".\\assets\\textfile3.obj",
+                    ".\\assets\\textfilepalette.png");
         }
     },
-    IMAGE{
-        public String get3DPath(){
-            return "";
+    IMAGE {
+        @Override
+        public Mesh getMesh() {
+            return new MeshBuilder().readOBJ(
+                    ".\\assets\\imagefile.obj",
+                    ".\\assets\\imagefilepalette.png");
         }
     },
-    ZIP{
-        public String get3DPath() {
-            return "";
+    DIRECTORY {
+        @Override
+        public Mesh getMesh() {
+            return new MeshBuilder().readOBJ(
+                    ".\\assets\\folder (1).obj",
+                    ".\\assets\\folderpalette.png");
+        }
+    },
+    ZIP {
+        @Override
+        public Mesh getMesh() {
+            return new MeshBuilder().readOBJ(
+                    ".\\assets\\folder (1).obj",
+                    ".\\assets\\folderpalette.png");
         }
     };
-
-    /**
-     * @return assets filepath for the 3D object
-     */
-    abstract String get3DPath();
+    public abstract Mesh getMesh();
 }
