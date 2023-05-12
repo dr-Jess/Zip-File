@@ -338,6 +338,7 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                 metrics = g.getFontMetrics(new Font("Courier New", Font.BOLD, 30));
                 String temp = "";
                 int drawHeight = 150;
+
                 for(char c: text.toCharArray()){
                     if(metrics.stringWidth(temp) > 500 || c == '\n'){
                         StringBuilder remainder = new StringBuilder();
@@ -356,7 +357,11 @@ public class GamePlayScreen extends JPanel implements MouseListener, MouseMotion
                         }
                         g.drawString(toPrint, 350,drawHeight);
                         drawHeight += 40;
-                        temp = remainder.toString() + c;
+                        if(c != '\n')
+                            temp = remainder.toString() + c;
+                        else
+                            temp = remainder.toString() + " ";
+
                     }else{
                         temp+=c;
                     }
